@@ -118,8 +118,15 @@ export interface RacePrediction {
   id: string;
   player_id: string;
   race_id: string;
-  sprint_winner_id: string;
-  race_winner_id: string;
+  // Top 3 Sprint predictions
+  sprint_1st_id: string;
+  sprint_2nd_id: string;
+  sprint_3rd_id: string;
+  // Top 3 Race predictions
+  race_1st_id: string;
+  race_2nd_id: string;
+  race_3rd_id: string;
+  // Glorious 7th prediction
   glorious_7_id: string;
   submitted_at: string;
   is_late: boolean;
@@ -136,8 +143,15 @@ export interface RaceResult {
 export interface PlayerScore {
   player_id: string;
   race_id: string;
-  sprint_points: number;
-  race_points: number;
+  // Individual position points for sprint top 3
+  sprint_1st_points: number;
+  sprint_2nd_points: number;
+  sprint_3rd_points: number;
+  // Individual position points for race top 3
+  race_1st_points: number;
+  race_2nd_points: number;
+  race_3rd_points: number;
+  // Glorious 7 and penalties
   glorious_7_points: number;
   penalty_points: number;
 }
@@ -147,12 +161,27 @@ export interface ScoreBreakdown {
   player_name: string;
   race_id: string;
   race_name: string;
-  sprint_winner_prediction?: string;
-  sprint_winner_actual?: string;
-  sprint_points: number;
-  race_winner_prediction?: string;
-  race_winner_actual?: string;
-  race_points: number;
+  // Sprint top 3 predictions
+  sprint_1st_prediction?: string;
+  sprint_1st_actual?: string;
+  sprint_1st_points: number;
+  sprint_2nd_prediction?: string;
+  sprint_2nd_actual?: string;
+  sprint_2nd_points: number;
+  sprint_3rd_prediction?: string;
+  sprint_3rd_actual?: string;
+  sprint_3rd_points: number;
+  // Race top 3 predictions
+  race_1st_prediction?: string;
+  race_1st_actual?: string;
+  race_1st_points: number;
+  race_2nd_prediction?: string;
+  race_2nd_actual?: string;
+  race_2nd_points: number;
+  race_3rd_prediction?: string;
+  race_3rd_actual?: string;
+  race_3rd_points: number;
+  // Glorious 7
   glorious_7_prediction?: string;
   glorious_7_actual?: string;
   glorious_7_points: number;
@@ -163,7 +192,7 @@ export interface ScoreBreakdown {
 
 /**
  * Calculate score for a single race prediction against race results
- * @param prediction Player's race prediction
+ * @param prediction Player's race prediction (top 3 for sprint and race)
  * @param sprintResults Sprint race results (array of positions)
  * @param raceResults Main race results (array of positions)
  * @param lateSubmissionCount Number of previous late submissions by this player
@@ -175,34 +204,67 @@ export function calculateRaceScore(
   raceResults: RaceResult[],
   lateSubmissionCount: number = 0
 ): PlayerScore {
-  let sprintPoints = 0;
-  let racePoints = 0;
+  let sprint1stPoints = 0;
+  let sprint2ndPoints = 0;
+  let sprint3rdPoints = 0;
+  let race1stPoints = 0;
+  let race2ndPoints = 0;
+  let race3rdPoints = 0;
   let glorious7Points = 0;
   let penaltyPoints = 0;
 
-  // Calculate sprint winner points
-  const sprintWinnerPosition = sprintResults.find(
-    (r) => r.rider_id === prediction.sprint_winner_id
+  // Calculate sprint 1st place prediction points
+  const sprint1stPosition = sprintResults.find(
+    (r) => r.rider_id === prediction.sprint_1st_id
   )?.position;
-
-  if (sprintWinnerPosition !== undefined) {
-    sprintPoints = calculatePositionPoints(sprintWinnerPosition, 1, 'winner');
+  if (sprint1stPosition !== undefined) {
+    sprint1stPoints = calculatePositionPoints(sprint1stPosition, 1, 'winner');
   }
 
-  // Calculate race winner points
-  const raceWinnerPosition = raceResults.find(
-    (r) => r.rider_id === prediction.race_winner_id
+  // Calculate sprint 2nd place prediction points
+  const sprint2ndPosition = sprintResults.find(
+    (r) => r.rider_id === prediction.sprint_2nd_id
   )?.position;
-
-  if (raceWinnerPosition !== undefined) {
-    racePoints = calculatePositionPoints(raceWinnerPosition, 1, 'winner');
+  if (sprint2ndPosition !== undefined) {
+    sprint2ndPoints = calculatePositionPoints(sprint2ndPosition, 2, 'winner');
   }
 
-  // Calculate glorious 7 points
+  // Calculate sprint 3rd place prediction points
+  const sprint3rdPosition = sprintResults.find(
+    (r) => r.rider_id === prediction.sprint_3rd_id
+  )?.position;
+  if (sprint3rdPosition !== undefined) {
+    sprint3rdPoints = calculatePositionPoints(sprint3rdPosition, 3, 'winner');
+  }
+
+  // Calculate race 1st place prediction points
+  const race1stPosition = raceResults.find(
+    (r) => r.rider_id === prediction.race_1st_id
+  )?.position;
+  if (race1stPosition !== undefined) {
+    race1stPoints = calculatePositionPoints(race1stPosition, 1, 'winner');
+  }
+
+  // Calculate race 2nd place prediction points
+  const race2ndPosition = raceResults.find(
+    (r) => r.rider_id === prediction.race_2nd_id
+  )?.position;
+  if (race2ndPosition !== undefined) {
+    race2ndPoints = calculatePositionPoints(race2ndPosition, 2, 'winner');
+  }
+
+  // Calculate race 3rd place prediction points
+  const race3rdPosition = raceResults.find(
+    (r) => r.rider_id === prediction.race_3rd_id
+  )?.position;
+  if (race3rdPosition !== undefined) {
+    race3rdPoints = calculatePositionPoints(race3rdPosition, 3, 'winner');
+  }
+
+  // Calculate glorious 7 points (from main race results)
   const glorious7Position = raceResults.find(
     (r) => r.rider_id === prediction.glorious_7_id
   )?.position;
-
   if (glorious7Position !== undefined) {
     glorious7Points = calculatePositionPoints(glorious7Position, 7, 'glorious7');
   }
@@ -215,8 +277,12 @@ export function calculateRaceScore(
   return {
     player_id: prediction.player_id,
     race_id: prediction.race_id,
-    sprint_points: sprintPoints,
-    race_points: racePoints,
+    sprint_1st_points: sprint1stPoints,
+    sprint_2nd_points: sprint2ndPoints,
+    sprint_3rd_points: sprint3rdPoints,
+    race_1st_points: race1stPoints,
+    race_2nd_points: race2ndPoints,
+    race_3rd_points: race3rdPoints,
     glorious_7_points: glorious7Points,
     penalty_points: penaltyPoints,
   };

@@ -155,11 +155,16 @@ export async function POST(request: NextRequest) {
     );
 
     // Store scores in database (upsert to handle recalculation)
+    // Map individual position points to database columns
     const scoresWithoutTotal = scores.map((score) => ({
       player_id: score.player_id,
       race_id: score.race_id,
-      sprint_points: score.sprint_points,
-      race_points: score.race_points,
+      sprint_1st_points: score.sprint_1st_points,
+      sprint_2nd_points: score.sprint_2nd_points,
+      sprint_3rd_points: score.sprint_3rd_points,
+      race_1st_points: score.race_1st_points,
+      race_2nd_points: score.race_2nd_points,
+      race_3rd_points: score.race_3rd_points,
       glorious_7_points: score.glorious_7_points,
       penalty_points: score.penalty_points,
     }));

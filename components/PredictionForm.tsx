@@ -10,8 +10,12 @@ interface PredictionFormProps {
   raceName: string
   riders: Rider[]
   existingPrediction?: {
-    sprint_winner_id: string
-    race_winner_id: string
+    sprint_1st_id: string
+    sprint_2nd_id: string
+    sprint_3rd_id: string
+    race_1st_id: string
+    race_2nd_id: string
+    race_3rd_id: string
     glorious_7_id: string
   } | null
   deadlineAt: string
@@ -29,12 +33,29 @@ export default function PredictionForm({
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
 
-  const [sprintWinnerId, setSprintWinnerId] = useState(
-    existingPrediction?.sprint_winner_id || ''
+  // Sprint top 3 predictions
+  const [sprint1stId, setSprint1stId] = useState(
+    existingPrediction?.sprint_1st_id || ''
   )
-  const [raceWinnerId, setRaceWinnerId] = useState(
-    existingPrediction?.race_winner_id || ''
+  const [sprint2ndId, setSprint2ndId] = useState(
+    existingPrediction?.sprint_2nd_id || ''
   )
+  const [sprint3rdId, setSprint3rdId] = useState(
+    existingPrediction?.sprint_3rd_id || ''
+  )
+
+  // Race top 3 predictions
+  const [race1stId, setRace1stId] = useState(
+    existingPrediction?.race_1st_id || ''
+  )
+  const [race2ndId, setRace2ndId] = useState(
+    existingPrediction?.race_2nd_id || ''
+  )
+  const [race3rdId, setRace3rdId] = useState(
+    existingPrediction?.race_3rd_id || ''
+  )
+
+  // Glorious 7
   const [glorious7Id, setGlorious7Id] = useState(
     existingPrediction?.glorious_7_id || ''
   )
@@ -48,11 +69,20 @@ export default function PredictionForm({
     setError('')
     setLoading(true)
 
-    // Validate no duplicate riders
-    const selectedRiders = [sprintWinnerId, raceWinnerId, glorious7Id]
-    const uniqueRiders = new Set(selectedRiders.filter(Boolean))
-    if (uniqueRiders.size !== selectedRiders.filter(Boolean).length) {
-      setError('You cannot select the same rider for multiple predictions')
+    // Validate no duplicate riders within sprint predictions
+    const sprintSelections = [sprint1stId, sprint2ndId, sprint3rdId].filter(Boolean)
+    const uniqueSprintRiders = new Set(sprintSelections)
+    if (uniqueSprintRiders.size !== sprintSelections.length) {
+      setError('You cannot select the same rider for multiple sprint positions')
+      setLoading(false)
+      return
+    }
+
+    // Validate no duplicate riders within race predictions
+    const raceSelections = [race1stId, race2ndId, race3rdId].filter(Boolean)
+    const uniqueRaceRiders = new Set(raceSelections)
+    if (uniqueRaceRiders.size !== raceSelections.length) {
+      setError('You cannot select the same rider for multiple race positions')
       setLoading(false)
       return
     }
@@ -65,8 +95,12 @@ export default function PredictionForm({
         },
         body: JSON.stringify({
           raceId,
-          sprintWinnerId,
-          raceWinnerId,
+          sprint1stId,
+          sprint2ndId,
+          sprint3rdId,
+          race1stId,
+          race2ndId,
+          race3rdId,
           glorious7Id,
         }),
       })
@@ -123,46 +157,83 @@ export default function PredictionForm({
 
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Sprint Race Top 3 */}
             <div className="md:col-span-2">
                  <div className="flex items-center gap-2 mb-4">
                     <span className="w-8 h-8 flex items-center justify-center bg-orange-500 text-black font-black italic rounded skew-x-12">S</span>
-                    <h3 className="text-xl font-display italic font-bold uppercase">Sprint Race</h3>
+                    <h3 className="text-xl font-display italic font-bold uppercase">Sprint Race - Top 3</h3>
                  </div>
-                 <RiderSelect
-                    label="Winner Prediction"
-                    riders={riders}
-                    value={sprintWinnerId}
-                    onChange={setSprintWinnerId}
-                    excludeIds={[raceWinnerId, glorious7Id]}
-                  />
+                 <p className="text-sm text-gray-500 mb-4 italic">Predict the top 3 finishers of the Sprint Race.</p>
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                   <RiderSelect
+                      label="1st Place"
+                      riders={riders}
+                      value={sprint1stId}
+                      onChange={setSprint1stId}
+                      excludeIds={[sprint2ndId, sprint3rdId]}
+                    />
+                   <RiderSelect
+                      label="2nd Place"
+                      riders={riders}
+                      value={sprint2ndId}
+                      onChange={setSprint2ndId}
+                      excludeIds={[sprint1stId, sprint3rdId]}
+                    />
+                   <RiderSelect
+                      label="3rd Place"
+                      riders={riders}
+                      value={sprint3rdId}
+                      onChange={setSprint3rdId}
+                      excludeIds={[sprint1stId, sprint2ndId]}
+                    />
+                 </div>
             </div>
 
+            {/* Grand Prix Race Top 3 */}
             <div className="md:col-span-2 border-t border-gray-800 pt-6">
                  <div className="flex items-center gap-2 mb-4">
                     <span className="w-8 h-8 flex items-center justify-center bg-motogp-red text-white font-black italic rounded skew-x-12">R</span>
-                    <h3 className="text-xl font-display italic font-bold uppercase">Grand Prix Race</h3>
+                    <h3 className="text-xl font-display italic font-bold uppercase">Grand Prix Race - Top 3</h3>
                  </div>
-                 <RiderSelect
-                  label="Winner Prediction"
-                  riders={riders}
-                  value={raceWinnerId}
-                  onChange={setRaceWinnerId}
-                  excludeIds={[sprintWinnerId, glorious7Id]}
-                />
+                 <p className="text-sm text-gray-500 mb-4 italic">Predict the top 3 finishers of the Main Race.</p>
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                   <RiderSelect
+                      label="1st Place"
+                      riders={riders}
+                      value={race1stId}
+                      onChange={setRace1stId}
+                      excludeIds={[race2ndId, race3rdId]}
+                    />
+                   <RiderSelect
+                      label="2nd Place"
+                      riders={riders}
+                      value={race2ndId}
+                      onChange={setRace2ndId}
+                      excludeIds={[race1stId, race3rdId]}
+                    />
+                   <RiderSelect
+                      label="3rd Place"
+                      riders={riders}
+                      value={race3rdId}
+                      onChange={setRace3rdId}
+                      excludeIds={[race1stId, race2ndId]}
+                    />
+                 </div>
             </div>
 
+            {/* Glorious 7th */}
             <div className="md:col-span-2 border-t border-gray-800 pt-6">
                  <div className="flex items-center gap-2 mb-4">
                     <span className="w-8 h-8 flex items-center justify-center bg-blue-600 text-white font-black italic rounded skew-x-12">7</span>
                     <h3 className="text-xl font-display italic font-bold uppercase">Glorious 7th</h3>
                  </div>
-                 <p className="text-sm text-gray-500 mb-4 italic">Predict who will finish exactly in 7th place.</p>
+                 <p className="text-sm text-gray-500 mb-4 italic">Predict who will finish exactly in 7th place in the Main Race.</p>
                  <RiderSelect
                   label="7th Place Prediction"
                   riders={riders}
                   value={glorious7Id}
                   onChange={setGlorious7Id}
-                  excludeIds={[sprintWinnerId, raceWinnerId]}
+                  excludeIds={[]}
                 />
             </div>
         </div>

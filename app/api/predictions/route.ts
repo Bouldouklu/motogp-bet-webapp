@@ -11,12 +11,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { raceId, sprintWinnerId, raceWinnerId, glorious7Id } =
-      await request.json()
+    const { 
+      raceId, 
+      sprint1stId, 
+      sprint2ndId, 
+      sprint3rdId, 
+      race1stId, 
+      race2ndId, 
+      race3rdId, 
+      glorious7Id 
+    } = await request.json()
 
-    if (!raceId || !sprintWinnerId || !raceWinnerId || !glorious7Id) {
+    // Validate all required fields
+    if (!raceId || !sprint1stId || !sprint2ndId || !sprint3rdId || 
+        !race1stId || !race2ndId || !race3rdId || !glorious7Id) {
       return NextResponse.json(
-        { error: 'All predictions are required' },
+        { error: 'All predictions are required (top 3 for sprint, top 3 for race, and glorious 7)' },
         { status: 400 }
       )
     }
@@ -45,14 +55,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Insert prediction
+    // Insert prediction with top 3 for sprint and race
     const { data, error } = await supabase
       .from('race_predictions')
       .insert({
         player_id: user.id,
         race_id: raceId,
-        sprint_winner_id: sprintWinnerId,
-        race_winner_id: raceWinnerId,
+        sprint_1st_id: sprint1stId,
+        sprint_2nd_id: sprint2ndId,
+        sprint_3rd_id: sprint3rdId,
+        race_1st_id: race1stId,
+        race_2nd_id: race2ndId,
+        race_3rd_id: race3rdId,
         glorious_7_id: glorious7Id,
         is_late: late,
       })
@@ -88,12 +102,22 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { raceId, sprintWinnerId, raceWinnerId, glorious7Id } =
-      await request.json()
+    const { 
+      raceId, 
+      sprint1stId, 
+      sprint2ndId, 
+      sprint3rdId, 
+      race1stId, 
+      race2ndId, 
+      race3rdId, 
+      glorious7Id 
+    } = await request.json()
 
-    if (!raceId || !sprintWinnerId || !raceWinnerId || !glorious7Id) {
+    // Validate all required fields
+    if (!raceId || !sprint1stId || !sprint2ndId || !sprint3rdId || 
+        !race1stId || !race2ndId || !race3rdId || !glorious7Id) {
       return NextResponse.json(
-        { error: 'All predictions are required' },
+        { error: 'All predictions are required (top 3 for sprint, top 3 for race, and glorious 7)' },
         { status: 400 }
       )
     }
@@ -122,12 +146,16 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Update prediction
+    // Update prediction with top 3 for sprint and race
     const { data, error } = await supabase
       .from('race_predictions')
       .update({
-        sprint_winner_id: sprintWinnerId,
-        race_winner_id: raceWinnerId,
+        sprint_1st_id: sprint1stId,
+        sprint_2nd_id: sprint2ndId,
+        sprint_3rd_id: sprint3rdId,
+        race_1st_id: race1stId,
+        race_2nd_id: race2ndId,
+        race_3rd_id: race3rdId,
         glorious_7_id: glorious7Id,
         is_late: late,
         submitted_at: new Date().toISOString(),

@@ -44,13 +44,20 @@ CREATE TABLE IF NOT EXISTS race_results (
   UNIQUE(race_id, result_type, position)
 );
 
--- Player Race Predictions
+-- Player Race Predictions (Top 3 for Sprint and Race + Glorious 7)
 CREATE TABLE IF NOT EXISTS race_predictions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   player_id UUID REFERENCES players(id) ON DELETE CASCADE,
   race_id UUID REFERENCES races(id) ON DELETE CASCADE,
-  sprint_winner_id UUID REFERENCES riders(id),
-  race_winner_id UUID REFERENCES riders(id),
+  -- Top 3 Sprint predictions
+  sprint_1st_id UUID REFERENCES riders(id),
+  sprint_2nd_id UUID REFERENCES riders(id),
+  sprint_3rd_id UUID REFERENCES riders(id),
+  -- Top 3 Race predictions
+  race_1st_id UUID REFERENCES riders(id),
+  race_2nd_id UUID REFERENCES riders(id),
+  race_3rd_id UUID REFERENCES riders(id),
+  -- Glorious 7th prediction
   glorious_7_id UUID REFERENCES riders(id),
   submitted_at TIMESTAMPTZ DEFAULT NOW(),
   is_late BOOLEAN DEFAULT false,
@@ -79,15 +86,28 @@ CREATE TABLE IF NOT EXISTS championship_results (
 );
 
 -- Calculated Scores (denormalized for performance)
+-- Stores individual position points for top 3 sprint and top 3 race predictions
 CREATE TABLE IF NOT EXISTS player_scores (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   player_id UUID REFERENCES players(id) ON DELETE CASCADE,
   race_id UUID REFERENCES races(id) ON DELETE CASCADE,
-  sprint_points INT DEFAULT 0,
-  race_points INT DEFAULT 0,
+  -- Sprint top 3 points
+  sprint_1st_points INT DEFAULT 0,
+  sprint_2nd_points INT DEFAULT 0,
+  sprint_3rd_points INT DEFAULT 0,
+  -- Race top 3 points
+  race_1st_points INT DEFAULT 0,
+  race_2nd_points INT DEFAULT 0,
+  race_3rd_points INT DEFAULT 0,
+  -- Glorious 7 and penalties
   glorious_7_points INT DEFAULT 0,
   penalty_points INT DEFAULT 0,
-  total_points INT GENERATED ALWAYS AS (sprint_points + race_points + glorious_7_points - penalty_points) STORED,
+  -- Auto-calculated total
+  total_points INT GENERATED ALWAYS AS (
+    COALESCE(sprint_1st_points, 0) + COALESCE(sprint_2nd_points, 0) + COALESCE(sprint_3rd_points, 0) +
+    COALESCE(race_1st_points, 0) + COALESCE(race_2nd_points, 0) + COALESCE(race_3rd_points, 0) +
+    COALESCE(glorious_7_points, 0) - COALESCE(penalty_points, 0)
+  ) STORED,
   UNIQUE(player_id, race_id)
 );
 

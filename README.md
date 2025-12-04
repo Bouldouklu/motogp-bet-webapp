@@ -5,7 +5,8 @@ A full-stack web application for MotoGP prediction and betting among friends. Pl
 ## Features
 
 - **Simple Authentication**: Passphrase-based login system (no email required)
-- **Race Predictions**: Predict Sprint Winner, Race Winner, and "Glorious 7" (7th place finisher)
+- **Race Predictions**: Predict Top 3 for Sprint, Top 3 for Race, and "Glorious 7" (7th place finisher)
+- **Flexible Predictions**: Same rider can be selected for both Sprint and Race (they're separate events!)
 - **Championship Predictions**: Season-long podium predictions
 - **Real-time Leaderboard**: Live standings with race points and championship points
 - **Deadline Enforcement**: Predictions lock at FP1 start time
@@ -107,7 +108,11 @@ motogp-bet-webapp/
 
 ## Scoring System
 
-### Race Predictions (Sprint & Main Race Winner)
+### Race Predictions (Sprint & Main Race Top 3)
+
+For each race, players predict the top 3 finishers for both Sprint and Main Race (6 predictions total).
+Points are awarded based on how close the predicted rider finishes to the predicted position:
+
 - Exact match: **12 points**
 - Off by 1 position: **9 points**
 - Off by 2 positions: **7 points**
@@ -115,6 +120,8 @@ motogp-bet-webapp/
 - Off by 4 positions: **4 points**
 - Off by 5 positions: **2 points**
 - Off by 6+ positions: **0 points**
+
+**Maximum per race weekend**: 72 points from position predictions (6 × 12 points)
 
 ### Glorious 7 (7th Place Prediction)
 - Exact 7th place: **12 points**
@@ -133,6 +140,25 @@ motogp-bet-webapp/
 - 1st offense: **-10 points**
 - 2nd offense: **-25 points**
 - 3rd+ offense: **-50 points each**
+
+## Database Migration (For Existing Installations)
+
+If you have an existing installation with the old single-winner prediction system, you need to migrate your database.
+
+Run the migration script in Supabase SQL Editor:
+
+```bash
+# The migration file is located at:
+supabase/migration-top3-predictions.sql
+```
+
+This migration will:
+1. Add new columns for top 3 predictions (`sprint_1st_id`, `sprint_2nd_id`, `sprint_3rd_id`, `race_1st_id`, `race_2nd_id`, `race_3rd_id`)
+2. Migrate existing predictions (old `sprint_winner_id` → `sprint_1st_id`, `race_winner_id` → `race_1st_id`)
+3. Add new score columns (`sprint_1st_points`, `sprint_2nd_points`, etc.)
+4. Update the `total_points` calculation
+
+**Important**: Back up your data before running the migration!
 
 ## Development Commands
 

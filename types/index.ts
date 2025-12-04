@@ -37,8 +37,15 @@ export interface RacePrediction {
   id: string;
   player_id: string;
   race_id: string;
-  sprint_winner_id: string;
-  race_winner_id: string;
+  // Top 3 Sprint predictions
+  sprint_1st_id: string;
+  sprint_2nd_id: string;
+  sprint_3rd_id: string;
+  // Top 3 Race predictions
+  race_1st_id: string;
+  race_2nd_id: string;
+  race_3rd_id: string;
+  // Glorious 7th prediction
   glorious_7_id: string;
   submitted_at: string;
   is_late: boolean;
@@ -65,8 +72,15 @@ export interface PlayerScore {
   id: string;
   player_id: string;
   race_id: string;
-  sprint_points: number;
-  race_points: number;
+  // Individual position points for sprint top 3
+  sprint_1st_points: number;
+  sprint_2nd_points: number;
+  sprint_3rd_points: number;
+  // Individual position points for race top 3
+  race_1st_points: number;
+  race_2nd_points: number;
+  race_3rd_points: number;
+  // Glorious 7 and penalties
   glorious_7_points: number;
   penalty_points: number;
   total_points: number;

@@ -41,7 +41,7 @@ The application uses Supabase (PostgreSQL) with the following core tables:
 - **players**: User accounts with passphrase authentication (no email/password)
 - **riders**: MotoGP riders (2026 grid with 22+ riders)
 - **races**: 22-race calendar with FP1 deadline timestamps
-- **race_predictions**: Player predictions (sprint winner, race winner, glorious 7th)
+- **race_predictions**: Player predictions (top 3 sprint, top 3 race, glorious 7th)
 - **championship_predictions**: Season-long podium predictions (locked before first race)
 - **race_results**: Actual race outcomes (sprint and race)
 - **player_scores**: Calculated points per race (denormalized for performance)
@@ -49,8 +49,10 @@ The application uses Supabase (PostgreSQL) with the following core tables:
 
 ### Scoring Logic (lib/scoring.ts)
 
-**Race Winner Predictions** (Sprint & Main Race):
-- Exact match (1st place): 12 points
+**Top 3 Position Predictions** (Sprint & Main Race):
+Players predict 1st, 2nd, and 3rd place for both Sprint and Main Race (6 predictions total).
+Points are awarded based on how close the predicted rider finishes to the predicted position:
+- Exact match: 12 points
 - Off by 1 position: 9 points
 - Off by 2 positions: 7 points
 - Off by 3 positions: 5 points
@@ -105,7 +107,7 @@ lib/
 
 1. **Deadline Enforcement**: Predictions lock at FP1 start time (stored in UTC, displayed in user's timezone)
 2. **Late Submission Penalties**: Automatically flagged and penalized progressively
-3. **No Duplicate Riders**: Cannot select the same rider for sprint winner, race winner, and glorious 7 in a single race
+3. **No Duplicate Riders Within Category**: Cannot select the same rider for multiple positions within the same category (e.g., can't pick same rider for 1st and 2nd in Sprint). However, the same rider CAN be selected for both Sprint and Race predictions since they are separate events.
 4. **Missing Predictions**: No prediction = 0 points (no penalty, unlike late submissions)
 5. **Tie-Breaking**: Players with same total points are ranked by number of exact predictions
 

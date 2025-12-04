@@ -4,27 +4,39 @@
 
 The scoring engine is the core component that calculates player points based on their race predictions and actual race results. It handles:
 
-- Sprint winner predictions
-- Race winner predictions
+- Sprint top 3 predictions (1st, 2nd, 3rd place)
+- Race top 3 predictions (1st, 2nd, 3rd place)
 - Glorious 7th place predictions
 - Late submission penalties
 - Championship predictions (end of season)
 
+## Betting System
+
+For each race weekend, players must predict:
+
+1. **Sprint Race Top 3**: Who will finish 1st, 2nd, and 3rd in the Sprint
+2. **Main Race Top 3**: Who will finish 1st, 2nd, and 3rd in the Grand Prix
+3. **Glorious 7th**: Who will finish exactly 7th in the Main Race
+
+**Note**: The same rider CAN be selected for both Sprint and Race predictions since they are separate events. However, you cannot select the same rider for multiple positions within the same category (e.g., can't pick the same rider for both 1st and 2nd in Sprint).
+
 ## Scoring Rules
 
-### Race Winner Predictions (Sprint & Main Race)
+### Position Predictions (Sprint & Main Race Top 3)
 
-Points are awarded based on how close the predicted rider finishes to 1st place:
+Points are awarded based on how close the predicted rider finishes to the predicted position:
 
 | Accuracy | Points |
 |----------|--------|
-| Exact match (1st place) | 12 |
-| Off by 1 position (2nd) | 9 |
-| Off by 2 positions (3rd) | 7 |
-| Off by 3 positions (4th) | 5 |
-| Off by 4 positions (5th) | 4 |
-| Off by 5 positions (6th) | 2 |
+| Exact match | 12 |
+| Off by 1 position | 9 |
+| Off by 2 positions | 7 |
+| Off by 3 positions | 5 |
+| Off by 4 positions | 4 |
+| Off by 5 positions | 2 |
 | Off by 6+ positions | 0 |
+
+**Example**: If you predict a rider for 2nd place and they finish 3rd, you get 9 points (off by 1).
 
 ### Glorious 7 Prediction
 
