@@ -1,49 +1,6 @@
 # Development Roadmap
 
-## ✅ Phase 1: Foundation (COMPLETED)
-
-- [x] Initialize Next.js 16 project with TypeScript
-- [x] Set up Tailwind CSS v4
-- [x] Configure Supabase integration
-- [x] Create database schema with all tables
-- [x] Seed 2026 riders (22 riders)
-- [x] Seed 2026 race calendar (22 races)
-- [x] Implement passphrase authentication
-- [x] Build rider selection component
-- [x] Create prediction form
-- [x] Implement deadline enforcement
-- [x] Build dashboard page
-- [x] Create leaderboard view
-- [x] Add races calendar page
-
 ## ✅ Phase 2: Core Features (COMPLETED)
-
-### Admin Panel
-- [x] Create admin authentication check
-- [x] Build admin dashboard page
-- [x] Race results entry form
-  - [x] Sprint results input
-  - [x] Main race results input
-  - [x] Validation for position uniqueness
-- [x] Manual score calculation trigger
-- [ ] Player management interface (SKIPPED - can be done via Supabase)
-  - [ ] Create new players
-  - [ ] Reset player passphrases
-  - [ ] Apply manual penalties
-
-### Scoring Engine
-- [x] Implement automatic score calculation
-  - [x] Calculate sprint winner points
-  - [x] Calculate race winner points
-  - [x] Calculate glorious 7 points
-  - [x] Track and apply late submission penalties
-- [x] Create scoring API endpoints
-  - [x] POST /api/scores/calculate - Calculate and store scores
-  - [x] GET /api/scores/calculate - Preview score calculation
-  - [x] GET /api/scores/breakdown - Get detailed score breakdown
-  - [x] GET /api/scores/history - Get player historical scores
-- [x] Build score breakdown component
-- [x] Add historical score tracking
 
 ### Championship Predictions
 - [x] Championship prediction form

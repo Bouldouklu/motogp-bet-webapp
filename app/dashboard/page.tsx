@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import LogoutButton from '@/components/LogoutButton'
 
 export default async function DashboardPage() {
   const user = await getCurrentUser()
@@ -60,14 +61,7 @@ export default async function DashboardPage() {
               Ready to make your predictions?
             </p>
           </div>
-          <form action="/api/auth/logout" method="POST">
-            <button
-              type="submit"
-              className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              Logout
-            </button>
-          </form>
+          <LogoutButton />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

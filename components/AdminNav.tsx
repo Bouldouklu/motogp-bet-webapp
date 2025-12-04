@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 interface AdminNavProps {
   currentPage?: 'dashboard' | 'results' | 'players'
@@ -9,6 +9,16 @@ interface AdminNavProps {
 
 export default function AdminNav({ currentPage }: AdminNavProps) {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      router.push('/')
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
 
   const isActive = (page: string) => {
     if (page === 'dashboard') {
@@ -61,14 +71,12 @@ export default function AdminNav({ currentPage }: AdminNavProps) {
             >
               View Site
             </Link>
-            <form action="/api/auth/logout" method="POST">
-              <button
-                type="submit"
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-              >
-                Logout
-              </button>
-            </form>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+            >
+              Logout
+            </button>
           </div>
         </div>
 
