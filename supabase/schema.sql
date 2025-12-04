@@ -199,6 +199,7 @@ CREATE POLICY "Players can read their own championship predictions" ON champions
 CREATE POLICY "Players can insert their own race predictions" ON race_predictions FOR INSERT WITH CHECK (true);
 CREATE POLICY "Players can update their own race predictions" ON race_predictions FOR UPDATE USING (true);
 CREATE POLICY "Players can insert their own championship predictions" ON championship_predictions FOR INSERT WITH CHECK (true);
+CREATE POLICY "Players can update their own championship predictions" ON championship_predictions FOR UPDATE USING (true);
 
 -- Note: For production, you should implement proper authentication and restrict these policies
 -- This is a simplified version for initial development
