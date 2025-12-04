@@ -39,39 +39,62 @@ export default async function ChampionshipPage() {
   const deadlineAt = firstRace?.fp1_datetime || '2026-03-01T00:00:00Z'
 
   return (
-    <main className="min-h-screen p-6">
+    <main className="min-h-screen p-4 md:p-8 font-sans text-white">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-12">
           <Link
             href="/dashboard"
-            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 mb-4 inline-block"
+            className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors mb-4 inline-block"
           >
-            ← Back to Dashboard
+            ← Back to Pit Lane
           </Link>
-          <h1 className="text-4xl font-bold mb-2">🏆 Championship Prediction</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Predict the final 2026 season podium (1st, 2nd, 3rd place)
-          </p>
+          
+          <div className="border-b-4 border-motogp-red pb-6">
+            <h1 className="text-5xl md:text-7xl font-display font-black italic tracking-tighter uppercase transform -skew-x-12 leading-none">
+              Championship <span className="text-motogp-red">Prediction</span>
+            </h1>
+            <p className="text-xl text-gray-400 mt-2 font-display font-bold tracking-widest uppercase pl-2">
+              Predict the 2026 Podium
+            </p>
+          </div>
         </div>
 
-        {/* Scoring Info */}
-        <div className="mb-8 p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-          <h3 className="font-semibold mb-2">Scoring (End of Season)</h3>
-          <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-            <li>🥇 1st Place Correct: <strong>37 points</strong></li>
-            <li>🥈 2nd Place Correct: <strong>25 points</strong></li>
-            <li>🥉 3rd Place Correct: <strong>25 points</strong></li>
-          </ul>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Sidebar Info */}
+            <div className="lg:col-span-1 space-y-6">
+                <div className="p-6 bg-track-gray rounded-xl border border-gray-800">
+                    <h3 className="text-xl font-display font-black italic uppercase mb-4 text-white">Scoring Rules</h3>
+                    <ul className="space-y-4">
+                        <li className="flex items-center justify-between pb-2 border-b border-gray-800">
+                            <span className="text-gray-400 font-bold uppercase text-xs">Winner</span>
+                            <span className="font-display font-black italic text-xl text-yellow-500">37 PTS</span>
+                        </li>
+                        <li className="flex items-center justify-between pb-2 border-b border-gray-800">
+                            <span className="text-gray-400 font-bold uppercase text-xs">Runner Up</span>
+                            <span className="font-display font-black italic text-xl text-gray-300">25 PTS</span>
+                        </li>
+                        <li className="flex items-center justify-between">
+                            <span className="text-gray-400 font-bold uppercase text-xs">Third</span>
+                            <span className="font-display font-black italic text-xl text-orange-600">25 PTS</span>
+                        </li>
+                    </ul>
+                    <p className="text-xs text-gray-500 mt-4 italic">
+                        Points are awarded at the end of the season if your prediction exactly matches the final standings.
+                    </p>
+                </div>
+            </div>
 
-        {/* Form */}
-        <ChampionshipForm
-          riders={riders || []}
-          existingPrediction={existingPrediction}
-          deadlineAt={deadlineAt}
-          seasonYear={2026}
-        />
+            {/* Form */}
+            <div className="lg:col-span-2">
+                <ChampionshipForm
+                    riders={riders || []}
+                    existingPrediction={existingPrediction}
+                    deadlineAt={deadlineAt}
+                    seasonYear={2026}
+                />
+            </div>
+        </div>
       </div>
     </main>
   )

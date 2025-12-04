@@ -11,85 +11,85 @@ export default async function LeaderboardPage() {
     .order('total_points', { ascending: false })
 
   return (
-    <main className="min-h-screen p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Leaderboard</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Current season standings
-          </p>
-        </div>
-
-        <div className="mb-4">
-          <Link
-            href="/dashboard"
-            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-          >
-            ← Back to Dashboard
-          </Link>
+    <main className="min-h-screen p-4 md:p-8 font-sans text-white">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b-4 border-motogp-red pb-6">
+          <div>
+            <Link
+                href="/dashboard"
+                className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors mb-4 inline-block"
+            >
+                ← Back to Pit Lane
+            </Link>
+            <h1 className="text-5xl md:text-7xl font-display font-black italic tracking-tighter uppercase transform -skew-x-12 leading-none">
+              Championship <span className="text-motogp-red">Standings</span>
+            </h1>
+            <p className="text-xl text-gray-400 mt-2 font-display font-bold tracking-widest uppercase pl-2">
+              The Race for the Title
+            </p>
+          </div>
         </div>
 
         {leaderboard && leaderboard.length > 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-900">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Position
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Player
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Race Points
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Championship
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Total Points
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {leaderboard.map((entry, index) => (
-                  <tr key={entry.player_id} className="hover:bg-gray-50 dark:hover:bg-gray-900/50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        {index === 0 && (
-                          <span className="text-2xl mr-2">🥇</span>
-                        )}
-                        {index === 1 && (
-                          <span className="text-2xl mr-2">🥈</span>
-                        )}
-                        {index === 2 && (
-                          <span className="text-2xl mr-2">🥉</span>
-                        )}
-                        <span className="font-medium">{index + 1}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-medium">
-                      {entry.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
-                      {entry.race_points}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
-                      {entry.championship_points}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-blue-600">
-                      {entry.total_points}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="bg-track-gray rounded-xl border border-gray-800 overflow-hidden shadow-2xl relative">
+            {/* Decorative element */}
+            <div className="absolute top-0 right-0 p-4 opacity-5 text-9xl font-display font-black italic pointer-events-none">
+                RANK
+            </div>
+
+            <div className="relative z-10">
+                {/* Header */}
+                <div className="grid grid-cols-12 gap-4 p-4 bg-black/40 text-xs uppercase text-gray-500 font-bold tracking-wider border-b border-gray-800">
+                    <div className="col-span-2 md:col-span-1 text-center">Pos</div>
+                    <div className="col-span-6 md:col-span-5">Rider</div>
+                    <div className="hidden md:block col-span-2 text-center">Race Pts</div>
+                    <div className="hidden md:block col-span-2 text-center">Bonus</div>
+                    <div className="col-span-4 md:col-span-2 text-right pr-4">Total</div>
+                </div>
+
+                <div className="divide-y divide-gray-800">
+                    {leaderboard.map((entry, index) => (
+                        <div key={entry.player_id} className={`grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors ${index < 3 ? 'bg-gradient-to-r from-white/5 to-transparent' : ''}`}>
+                            <div className="col-span-2 md:col-span-1 text-center">
+                                <span className={`font-display font-black italic text-2xl md:text-3xl ${
+                                    index === 0 ? 'text-yellow-400' : 
+                                    index === 1 ? 'text-gray-400' : 
+                                    index === 2 ? 'text-amber-700' : 'text-gray-600'
+                                }`}>
+                                    {index + 1}
+                                </span>
+                            </div>
+                            <div className="col-span-6 md:col-span-5">
+                                <div className="font-bold uppercase text-lg md:text-xl truncate">{entry.name}</div>
+                                {index === 0 && <div className="text-xs text-yellow-500 font-bold uppercase tracking-wider">Current Leader</div>}
+                            </div>
+                            <div className="hidden md:block col-span-2 text-center">
+                                <div className="font-mono text-gray-400">{entry.race_points}</div>
+                            </div>
+                            <div className="hidden md:block col-span-2 text-center">
+                                <div className="font-mono text-gray-400">{entry.championship_points}</div>
+                            </div>
+                            <div className="col-span-4 md:col-span-2 text-right pr-4">
+                                <div className="font-display font-black italic text-3xl text-motogp-red">{entry.total_points}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
           </div>
         ) : (
-          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-gray-600 dark:text-gray-400">
-              No standings available yet. Start making predictions!
+          <div className="p-12 bg-track-gray rounded-xl border border-gray-800 text-center">
+            <p className="text-2xl font-display font-bold italic text-gray-500 uppercase mb-2">
+              No standings yet
             </p>
+            <p className="text-gray-400">
+              The season hasn't started. Make your predictions to get on the board!
+            </p>
+            <div className="mt-6">
+                <Link href="/dashboard" className="inline-block px-6 py-3 bg-motogp-red hover:bg-white hover:text-black text-white font-black italic uppercase tracking-wider transform -skew-x-12 transition-all">
+                    <span className="inline-block skew-x-12">Go to Dashboard</span>
+                </Link>
+            </div>
           </div>
         )}
       </div>

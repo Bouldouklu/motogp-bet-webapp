@@ -27,10 +27,10 @@ export default async function PredictPage({
 
   if (!race) {
     return (
-      <main className="min-h-screen p-6">
+      <main className="min-h-screen p-6 font-sans text-white">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl font-bold mb-4">Race not found</h1>
-          <Link href="/dashboard" className="text-blue-600 hover:text-blue-700">
+          <h1 className="text-4xl font-display font-black italic uppercase mb-4">Race not found</h1>
+          <Link href="/dashboard" className="text-motogp-red hover:text-white font-bold uppercase">
             ← Back to Dashboard
           </Link>
         </div>
@@ -54,60 +54,67 @@ export default async function PredictPage({
     .single()
 
   return (
-    <main className="min-h-screen p-6">
+    <main className="min-h-screen p-4 md:p-8 font-sans text-white">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link
             href="/dashboard"
-            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 mb-4 inline-block"
+            className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors mb-4 inline-block"
           >
-            ← Back to Dashboard
+            ← Back to Pit Lane
           </Link>
-          <h1 className="text-4xl font-bold mb-2">
-            Round {race.round_number}: {race.name}
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            {race.circuit} • {race.country}
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b-4 border-motogp-red pb-6 gap-4">
             <div>
-              <p className="font-medium mb-1">Sprint Race</p>
-              <p className="text-gray-600 dark:text-gray-400">
-                {new Date(race.sprint_date).toLocaleDateString()}
-              </p>
+                <div className="flex items-center gap-2 mb-2">
+                    <span className="bg-white text-black text-xs font-bold uppercase px-2 py-1 rounded -skew-x-12">
+                        Round {race.round_number}
+                    </span>
+                </div>
+                <h1 className="text-5xl md:text-7xl font-display font-black italic tracking-tighter uppercase transform -skew-x-12 leading-none">
+                    {race.name}
+                </h1>
+                <p className="text-xl text-gray-400 mt-2 font-display font-bold tracking-widest uppercase pl-2">
+                    {race.circuit}, {race.country}
+                </p>
             </div>
-            <div>
-              <p className="font-medium mb-1">Main Race</p>
-              <p className="text-gray-600 dark:text-gray-400">
-                {new Date(race.race_date).toLocaleDateString()}
-              </p>
+            <div className="text-right hidden md:block">
+                <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Sprint</div>
+                <div className="text-lg font-mono font-bold text-gray-300 mb-2">{new Date(race.sprint_date).toLocaleDateString()}</div>
+                <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Race</div>
+                <div className="text-xl font-mono font-bold text-white">{new Date(race.race_date).toLocaleDateString()}</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-          <h2 className="text-2xl font-bold mb-6">
-            {existingPrediction
-              ? 'Update Your Prediction'
-              : 'Make Your Prediction'}
-          </h2>
+        <div className="bg-track-gray rounded-xl border border-gray-800 p-6 md:p-8 shadow-2xl relative overflow-hidden">
+          {/* Decorative BG */}
+          <div className="absolute -top-10 -right-10 text-[10rem] opacity-5 font-display font-black italic text-motogp-red pointer-events-none select-none">
+            PREDICT
+          </div>
 
-          {riders && riders.length > 0 ? (
-            <PredictionForm
-              raceId={raceId}
-              raceName={race.name}
-              riders={riders}
-              existingPrediction={existingPrediction}
-              deadlineAt={race.fp1_datetime}
-            />
-          ) : (
-            <p className="text-gray-600 dark:text-gray-400">
-              No riders available for selection.
-            </p>
-          )}
+          <div className="relative z-10">
+              <h2 className="text-3xl font-display font-black italic uppercase mb-8 flex items-center gap-2">
+                <span className="w-1 h-8 bg-motogp-red skew-x-12 inline-block"></span>
+                {existingPrediction
+                ? 'Update Your Strategy'
+                : 'Enter Your Strategy'}
+            </h2>
+
+            {riders && riders.length > 0 ? (
+                <PredictionForm
+                raceId={raceId}
+                raceName={race.name}
+                riders={riders}
+                existingPrediction={existingPrediction}
+                deadlineAt={race.fp1_datetime}
+                />
+            ) : (
+                <p className="text-gray-400 italic">
+                No riders available for selection.
+                </p>
+            )}
+          </div>
         </div>
       </div>
     </main>

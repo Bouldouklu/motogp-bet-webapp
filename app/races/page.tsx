@@ -33,69 +33,83 @@ export default async function RacesPage() {
   }
 
   return (
-    <main className="min-h-screen p-6">
+    <main className="min-h-screen p-6 font-sans text-white">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">2026 Race Calendar</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            22 rounds around the world
-          </p>
-        </div>
-
-        <div className="mb-4">
-          <Link
-            href="/dashboard"
-            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-          >
-            ← Back to Dashboard
-          </Link>
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b-4 border-motogp-red pb-6">
+            <div>
+                <Link
+                    href="/dashboard"
+                    className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors mb-4 inline-block"
+                >
+                    ← Back to Pit Lane
+                </Link>
+                <h1 className="text-5xl md:text-7xl font-display font-black italic tracking-tighter uppercase transform -skew-x-12 leading-none">
+                    Race <span className="text-motogp-red">Calendar</span>
+                </h1>
+                <p className="text-xl text-gray-400 mt-2 font-display font-bold tracking-widest uppercase pl-2">
+                    2026 Season Schedule
+                </p>
+            </div>
         </div>
 
         {upcomingRaces && upcomingRaces.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Upcoming Races</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mb-16">
+            <h2 className="text-3xl font-display font-black italic uppercase mb-6 flex items-center gap-2">
+                <span className="w-1 h-8 bg-motogp-red skew-x-12 inline-block"></span>
+                Upcoming Races
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {upcomingRaces.map((race) => (
                 <div
                   key={race.id}
-                  className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+                  className="p-6 bg-track-gray rounded-xl border border-gray-800 hover:border-gray-600 transition-all relative overflow-hidden group"
                 >
-                  <div className="mb-3">
-                    <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded">
-                      Round {race.round_number}
-                    </span>
+                  <div className="absolute top-0 right-0 p-4 opacity-5 text-6xl font-display font-black italic group-hover:opacity-10 transition-opacity">
+                    {race.round_number}
                   </div>
-                  <h3 className="text-xl font-bold mb-1">{race.name}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                    {race.circuit}
-                  </p>
-                  <p className="text-sm mb-1">
-                    <span className="font-medium">Sprint:</span>{' '}
-                    {new Date(race.sprint_date).toLocaleDateString()}
-                  </p>
-                  <p className="text-sm mb-1">
-                    <span className="font-medium">Race:</span>{' '}
-                    {new Date(race.race_date).toLocaleDateString()}
-                  </p>
-                  <p className="text-sm mb-4">
-                    <span className="font-medium">Deadline:</span>{' '}
-                    {new Date(race.fp1_datetime).toLocaleString()}
-                  </p>
-                  {predictedRaceIds.has(race.id) ? (
-                    <Link
-                      href={`/predict/${race.id}`}
-                      className="inline-block px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
-                    >
-                      ✓ Edit Prediction
-                    </Link>
-                  ) : (
-                    <Link
-                      href={`/predict/${race.id}`}
-                      className="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-                    >
-                      Make Prediction
-                    </Link>
-                  )}
+                  
+                  <div className="relative z-10">
+                    <div className="mb-4">
+                        <span className="bg-gray-800 text-white text-xs font-bold uppercase px-2 py-1 rounded -skew-x-12 inline-block">
+                            Round {race.round_number}
+                        </span>
+                    </div>
+                    <h3 className="text-3xl font-display font-black italic uppercase leading-none mb-1 text-white">{race.name}</h3>
+                    <p className="text-sm text-gray-400 font-bold uppercase mb-6">
+                        {race.circuit}, {race.country}
+                    </p>
+                    
+                    <div className="space-y-2 mb-6 text-sm border-t border-gray-800 pt-4">
+                        <div className="flex justify-between">
+                            <span className="text-gray-500 font-bold uppercase">Sprint</span>
+                            <span className="font-mono text-gray-300">{new Date(race.sprint_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-motogp-red font-bold uppercase">Race</span>
+                            <span className="font-mono text-white font-bold">{new Date(race.race_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-gray-500 font-bold uppercase">Deadline</span>
+                            <span className="font-mono text-gray-300">{new Date(race.fp1_datetime).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                    </div>
+
+                    {predictedRaceIds.has(race.id) ? (
+                      <Link
+                        href={`/predict/${race.id}`}
+                        className="block w-full py-3 bg-green-900/20 border border-green-600 hover:bg-green-600 text-green-500 hover:text-white text-center font-black italic uppercase tracking-wider rounded transform -skew-x-12 transition-all"
+                      >
+                        <span className="inline-block skew-x-12">✓ Edit Prediction</span>
+                      </Link>
+                    ) : (
+                      <Link
+                        href={`/predict/${race.id}`}
+                        className="block w-full py-3 bg-motogp-red hover:bg-white text-white hover:text-black text-center font-black italic uppercase tracking-wider rounded shadow-lg shadow-red-900/20 transform -skew-x-12 transition-all"
+                      >
+                        <span className="inline-block skew-x-12">Predict</span>
+                      </Link>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -104,31 +118,34 @@ export default async function RacesPage() {
 
         {completedRaces && completedRaces.length > 0 && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Completed Races</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h2 className="text-3xl font-display font-black italic uppercase mb-6 flex items-center gap-2 text-gray-500">
+                <span className="w-1 h-8 bg-gray-600 skew-x-12 inline-block"></span>
+                Completed
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {completedRaces.map((race) => (
                 <div
                   key={race.id}
-                  className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+                  className="p-6 bg-track-gray/50 rounded-xl border border-gray-800 opacity-75 hover:opacity-100 transition-opacity"
                 >
                   <div className="mb-3">
-                    <span className="inline-block px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded">
-                      Round {race.round_number} - Completed
+                    <span className="inline-block px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-500 rounded -skew-x-12">
+                      Round {race.round_number} • Completed
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold mb-1">{race.name}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  <h3 className="text-2xl font-display font-bold italic uppercase mb-1 text-gray-300">{race.name}</h3>
+                  <p className="text-sm text-gray-500 font-bold uppercase mb-4">
                     {race.circuit}
                   </p>
-                  <p className="text-sm mb-4">
-                    <span className="font-medium">Race Date:</span>{' '}
+                  <p className="text-sm mb-6 text-gray-400">
+                    <span className="font-bold text-motogp-red">Race Date:</span>{' '}
                     {new Date(race.race_date).toLocaleDateString()}
                   </p>
                   <Link
                     href={`/races/${race.id}`}
-                    className="inline-block px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
+                    className="block w-full py-3 border border-gray-700 hover:bg-gray-800 text-gray-400 hover:text-white text-center font-bold uppercase italic tracking-wider rounded transform -skew-x-12 transition-all"
                   >
-                    View Results
+                    <span className="inline-block skew-x-12">View Results</span>
                   </Link>
                 </div>
               ))}
