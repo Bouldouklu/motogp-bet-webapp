@@ -161,8 +161,15 @@ const mockPrediction: RacePrediction = {
   id: 'pred1',
   player_id: 'player1',
   race_id: 'race1',
-  sprint_winner_id: 'rider1',
-  race_winner_id: 'rider2',
+  // Top 3 Sprint predictions
+  sprint_1st_id: 'rider1',
+  sprint_2nd_id: 'rider4',
+  sprint_3rd_id: 'rider5',
+  // Top 3 Race predictions
+  race_1st_id: 'rider2',
+  race_2nd_id: 'rider3',
+  race_3rd_id: 'rider6',
+  // Glorious 7
   glorious_7_id: 'rider7',
   submitted_at: '2026-03-01T10:00:00Z',
   is_late: false,
@@ -171,30 +178,44 @@ const mockPrediction: RacePrediction = {
 const sprintResults: RaceResult[] = [
   { id: 'sr1', race_id: 'race1', result_type: 'sprint', position: 1, rider_id: 'rider1' },
   { id: 'sr2', race_id: 'race1', result_type: 'sprint', position: 2, rider_id: 'rider4' },
+  { id: 'sr3', race_id: 'race1', result_type: 'sprint', position: 3, rider_id: 'rider5' },
 ]
 
 const raceResults: RaceResult[] = [
   { id: 'rr1', race_id: 'race1', result_type: 'race', position: 1, rider_id: 'rider2' },
-  { id: 'rr2', race_id: 'race1', result_type: 'race', position: 7, rider_id: 'rider7' },
+  { id: 'rr2', race_id: 'race1', result_type: 'race', position: 2, rider_id: 'rider3' },
+  { id: 'rr3', race_id: 'race1', result_type: 'race', position: 3, rider_id: 'rider6' },
+  { id: 'rr4', race_id: 'race1', result_type: 'race', position: 7, rider_id: 'rider7' },
 ]
 
 const score = calculateRaceScore(mockPrediction, sprintResults, raceResults, 0)
 
-console.log(`Sprint winner prediction: ${score.sprint_points === 12 ? '✅' : '❌'} ${score.sprint_points} points (expected 12)`)
-console.log(`Race winner prediction: ${score.race_points === 12 ? '✅' : '❌'} ${score.race_points} points (expected 12)`)
+// Test sprint top 3 predictions
+console.log(`Sprint 1st prediction: ${score.sprint_1st_points === 12 ? '✅' : '❌'} ${score.sprint_1st_points} points (expected 12)`)
+console.log(`Sprint 2nd prediction: ${score.sprint_2nd_points === 12 ? '✅' : '❌'} ${score.sprint_2nd_points} points (expected 12)`)
+console.log(`Sprint 3rd prediction: ${score.sprint_3rd_points === 12 ? '✅' : '❌'} ${score.sprint_3rd_points} points (expected 12)`)
+// Test race top 3 predictions
+console.log(`Race 1st prediction: ${score.race_1st_points === 12 ? '✅' : '❌'} ${score.race_1st_points} points (expected 12)`)
+console.log(`Race 2nd prediction: ${score.race_2nd_points === 12 ? '✅' : '❌'} ${score.race_2nd_points} points (expected 12)`)
+console.log(`Race 3rd prediction: ${score.race_3rd_points === 12 ? '✅' : '❌'} ${score.race_3rd_points} points (expected 12)`)
+// Test glorious 7 and penalty
 console.log(`Glorious 7 prediction: ${score.glorious_7_points === 12 ? '✅' : '❌'} ${score.glorious_7_points} points (expected 12)`)
 console.log(`Penalty: ${score.penalty_points === 0 ? '✅' : '❌'} ${score.penalty_points} points (expected 0)`)
 
 if (
-  score.sprint_points === 12 &&
-  score.race_points === 12 &&
+  score.sprint_1st_points === 12 &&
+  score.sprint_2nd_points === 12 &&
+  score.sprint_3rd_points === 12 &&
+  score.race_1st_points === 12 &&
+  score.race_2nd_points === 12 &&
+  score.race_3rd_points === 12 &&
   score.glorious_7_points === 12 &&
   score.penalty_points === 0
 ) {
-  passed += 4
-  console.log('✅ Perfect predictions = 36 total points')
+  passed += 8
+  console.log('✅ Perfect predictions = 84 total points (6 positions × 12 + glorious 7)')
 } else {
-  failed += 4
+  failed += 8
   console.log(`❌ Score calculation failed`)
 }
 console.log()

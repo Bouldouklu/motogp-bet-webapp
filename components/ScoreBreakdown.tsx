@@ -65,6 +65,12 @@ export default function ScoreBreakdown({ raceId, playerId }: ScoreBreakdownProps
     )
   }
 
+  // Calculate sprint and race totals for display
+  const getSprintTotal = (b: ScoreBreakdownType) => 
+    b.sprint_1st_points + b.sprint_2nd_points + b.sprint_3rd_points
+  const getRaceTotal = (b: ScoreBreakdownType) => 
+    b.race_1st_points + b.race_2nd_points + b.race_3rd_points
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">{raceName} - Score Breakdown</h2>
@@ -92,78 +98,93 @@ export default function ScoreBreakdown({ raceId, playerId }: ScoreBreakdownProps
             </div>
           </div>
 
-          {/* Score Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Sprint Winner */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h4 className="font-semibold text-sm text-gray-700 dark:text-gray-300">
-                  Sprint Winner
-                </h4>
-                <span className={`font-bold text-lg ${getPointsColor(breakdown.sprint_points)}`}>
-                  +{breakdown.sprint_points}
-                </span>
-              </div>
-              <div className="text-sm space-y-1">
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">Predicted: </span>
-                  <span className="font-medium">{breakdown.sprint_winner_prediction || 'N/A'}</span>
-                </div>
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">Actual: </span>
-                  <span className="font-medium text-green-600 dark:text-green-400">
-                    {breakdown.sprint_winner_actual || 'N/A'}
-                  </span>
-                </div>
-              </div>
+          {/* Sprint Top 3 Section */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-semibold text-orange-600 dark:text-orange-400">
+                🏁 Sprint Race Top 3
+              </h4>
+              <span className={`font-bold ${getPointsColor(getSprintTotal(breakdown))}`}>
+                +{getSprintTotal(breakdown)} pts
+              </span>
             </div>
-
-            {/* Race Winner */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h4 className="font-semibold text-sm text-gray-700 dark:text-gray-300">
-                  Race Winner
-                </h4>
-                <span className={`font-bold text-lg ${getPointsColor(breakdown.race_points)}`}>
-                  +{breakdown.race_points}
-                </span>
-              </div>
-              <div className="text-sm space-y-1">
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">Predicted: </span>
-                  <span className="font-medium">{breakdown.race_winner_prediction || 'N/A'}</span>
-                </div>
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">Actual: </span>
-                  <span className="font-medium text-green-600 dark:text-green-400">
-                    {breakdown.race_winner_actual || 'N/A'}
-                  </span>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Sprint 1st */}
+              <PredictionCard
+                position="1st"
+                prediction={breakdown.sprint_1st_prediction}
+                actual={breakdown.sprint_1st_actual}
+                points={breakdown.sprint_1st_points}
+              />
+              {/* Sprint 2nd */}
+              <PredictionCard
+                position="2nd"
+                prediction={breakdown.sprint_2nd_prediction}
+                actual={breakdown.sprint_2nd_actual}
+                points={breakdown.sprint_2nd_points}
+              />
+              {/* Sprint 3rd */}
+              <PredictionCard
+                position="3rd"
+                prediction={breakdown.sprint_3rd_prediction}
+                actual={breakdown.sprint_3rd_actual}
+                points={breakdown.sprint_3rd_points}
+              />
             </div>
+          </div>
 
-            {/* Glorious 7 */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h4 className="font-semibold text-sm text-gray-700 dark:text-gray-300">
-                  Glorious 7th
-                </h4>
-                <span className={`font-bold text-lg ${getPointsColor(breakdown.glorious_7_points)}`}>
-                  +{breakdown.glorious_7_points}
-                </span>
-              </div>
-              <div className="text-sm space-y-1">
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">Predicted: </span>
-                  <span className="font-medium">{breakdown.glorious_7_prediction || 'N/A'}</span>
-                </div>
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">Actual: </span>
-                  <span className="font-medium text-green-600 dark:text-green-400">
-                    {breakdown.glorious_7_actual || 'N/A'}
-                  </span>
-                </div>
-              </div>
+          {/* Race Top 3 Section */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-semibold text-red-600 dark:text-red-400">
+                🏆 Grand Prix Top 3
+              </h4>
+              <span className={`font-bold ${getPointsColor(getRaceTotal(breakdown))}`}>
+                +{getRaceTotal(breakdown)} pts
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Race 1st */}
+              <PredictionCard
+                position="1st"
+                prediction={breakdown.race_1st_prediction}
+                actual={breakdown.race_1st_actual}
+                points={breakdown.race_1st_points}
+              />
+              {/* Race 2nd */}
+              <PredictionCard
+                position="2nd"
+                prediction={breakdown.race_2nd_prediction}
+                actual={breakdown.race_2nd_actual}
+                points={breakdown.race_2nd_points}
+              />
+              {/* Race 3rd */}
+              <PredictionCard
+                position="3rd"
+                prediction={breakdown.race_3rd_prediction}
+                actual={breakdown.race_3rd_actual}
+                points={breakdown.race_3rd_points}
+              />
+            </div>
+          </div>
+
+          {/* Glorious 7 Section */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-semibold text-blue-600 dark:text-blue-400">
+                7️⃣ Glorious 7th
+              </h4>
+              <span className={`font-bold ${getPointsColor(breakdown.glorious_7_points)}`}>
+                +{breakdown.glorious_7_points} pts
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <PredictionCard
+                position="7th"
+                prediction={breakdown.glorious_7_prediction}
+                actual={breakdown.glorious_7_actual}
+                points={breakdown.glorious_7_points}
+              />
             </div>
           </div>
 
@@ -181,7 +202,7 @@ export default function ScoreBreakdown({ raceId, playerId }: ScoreBreakdownProps
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600 dark:text-gray-400">
-                Sprint ({breakdown.sprint_points}) + Race ({breakdown.race_points}) + Glorious 7 (
+                Sprint ({getSprintTotal(breakdown)}) + Race ({getRaceTotal(breakdown)}) + Glorious 7 (
                 {breakdown.glorious_7_points})
                 {breakdown.penalty_points > 0 && ` - Penalty (${breakdown.penalty_points})`}
               </span>
@@ -190,6 +211,46 @@ export default function ScoreBreakdown({ raceId, playerId }: ScoreBreakdownProps
           </div>
         </div>
       ))}
+    </div>
+  )
+}
+
+/**
+ * Reusable prediction card component
+ */
+function PredictionCard({
+  position,
+  prediction,
+  actual,
+  points,
+}: {
+  position: string
+  prediction?: string
+  actual?: string
+  points: number
+}) {
+  return (
+    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+          {position} Place
+        </span>
+        <span className={`font-bold ${getPointsColor(points)}`}>
+          +{points}
+        </span>
+      </div>
+      <div className="text-sm space-y-1">
+        <div>
+          <span className="text-gray-600 dark:text-gray-400">Predicted: </span>
+          <span className="font-medium">{prediction || 'N/A'}</span>
+        </div>
+        <div>
+          <span className="text-gray-600 dark:text-gray-400">Actual: </span>
+          <span className="font-medium text-green-600 dark:text-green-400">
+            {actual || 'N/A'}
+          </span>
+        </div>
+      </div>
     </div>
   )
 }

@@ -150,33 +150,33 @@ export async function GET(request: NextRequest) {
         race_name: race?.name || 'Unknown Race',
 
         // Sprint top 3 predictions
-        sprint_1st_prediction: formatRider(prediction.sprint_1st, sprintResults, prediction.sprint_1st_id),
+        sprint_1st_prediction: formatRider(prediction.sprint_1st, sprintResults || [], prediction.sprint_1st_id),
         sprint_1st_actual: formatActual(actualSprint1st),
         sprint_1st_points: playerScore?.sprint_1st_points || 0,
 
-        sprint_2nd_prediction: formatRider(prediction.sprint_2nd, sprintResults, prediction.sprint_2nd_id),
+        sprint_2nd_prediction: formatRider(prediction.sprint_2nd, sprintResults || [], prediction.sprint_2nd_id),
         sprint_2nd_actual: formatActual(actualSprint2nd),
         sprint_2nd_points: playerScore?.sprint_2nd_points || 0,
 
-        sprint_3rd_prediction: formatRider(prediction.sprint_3rd, sprintResults, prediction.sprint_3rd_id),
+        sprint_3rd_prediction: formatRider(prediction.sprint_3rd, sprintResults || [], prediction.sprint_3rd_id),
         sprint_3rd_actual: formatActual(actualSprint3rd),
         sprint_3rd_points: playerScore?.sprint_3rd_points || 0,
 
         // Race top 3 predictions
-        race_1st_prediction: formatRider(prediction.race_1st, raceResults, prediction.race_1st_id),
+        race_1st_prediction: formatRider(prediction.race_1st, raceResults || [], prediction.race_1st_id),
         race_1st_actual: formatActual(actualRace1st),
         race_1st_points: playerScore?.race_1st_points || 0,
 
-        race_2nd_prediction: formatRider(prediction.race_2nd, raceResults, prediction.race_2nd_id),
+        race_2nd_prediction: formatRider(prediction.race_2nd, raceResults || [], prediction.race_2nd_id),
         race_2nd_actual: formatActual(actualRace2nd),
         race_2nd_points: playerScore?.race_2nd_points || 0,
 
-        race_3rd_prediction: formatRider(prediction.race_3rd, raceResults, prediction.race_3rd_id),
+        race_3rd_prediction: formatRider(prediction.race_3rd, raceResults || [], prediction.race_3rd_id),
         race_3rd_actual: formatActual(actualRace3rd),
         race_3rd_points: playerScore?.race_3rd_points || 0,
 
         // Glorious 7 predictions
-        glorious_7_prediction: formatRider(prediction.glorious_7, raceResults, prediction.glorious_7_id),
+        glorious_7_prediction: formatRider(prediction.glorious_7, raceResults || [], prediction.glorious_7_id),
         glorious_7_actual: formatActual(actualGlorious7),
         glorious_7_points: playerScore?.glorious_7_points || 0,
 
