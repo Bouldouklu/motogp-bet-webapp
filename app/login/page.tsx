@@ -32,8 +32,13 @@ export default function LoginPage() {
         return
       }
 
-      // Redirect to dashboard on success
-      router.push('/dashboard')
+      // Redirect based on user role
+      // Admin users go to admin panel, regular players go to dashboard
+      if (data.user.name.toLowerCase() === 'admin') {
+        router.push('/admin')
+      } else {
+        router.push('/dashboard')
+      }
       router.refresh()
     } catch (err) {
       setError('An error occurred. Please try again.')

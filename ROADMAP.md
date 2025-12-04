@@ -16,17 +16,17 @@
 - [x] Create leaderboard view
 - [x] Add races calendar page
 
-## 🚧 Phase 2: Core Features (NEXT UP)
+## 🚧 Phase 2: Core Features (IN PROGRESS)
 
 ### Admin Panel
-- [ ] Create admin authentication check
-- [ ] Build admin dashboard page
-- [ ] Race results entry form
-  - [ ] Sprint results input
-  - [ ] Main race results input
-  - [ ] Validation for position uniqueness
-- [ ] Manual score calculation trigger
-- [ ] Player management interface
+- [x] Create admin authentication check
+- [x] Build admin dashboard page
+- [x] Race results entry form
+  - [x] Sprint results input
+  - [x] Main race results input
+  - [x] Validation for position uniqueness
+- [x] Manual score calculation trigger
+- [ ] Player management interface (SKIPPED - can be done via Supabase)
   - [ ] Create new players
   - [ ] Reset player passphrases
   - [ ] Apply manual penalties
