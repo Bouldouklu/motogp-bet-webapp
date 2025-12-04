@@ -1,0 +1,102 @@
+import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
+
+export interface AuthUser {
+  id: string
+  name: string
+}
+
+/**
+ * Authenticate a player with name and passphrase
+ * @param name Player name
+ * @param passphrase Player passphrase
+ * @returns Player object if successful, null otherwise
+ */
+export async function authenticatePlayer(
+  name: string,
+  passphrase: string
+): Promise<AuthUser | null> {
+  const supabase = await createClient()
+
+  // Query the players table for matching credentials
+  const { data, error } = await supabase
+    .from('players')
+    .select('id, name, passphrase')
+    .eq('name', name)
+    .single()
+
+  if (error || !data) {
+    return null
+  }
+
+  // In production, you should use proper password hashing (bcrypt, argon2, etc.)
+  // For now, we're doing simple string comparison
+  if (data.passphrase !== passphrase) {
+    return null
+  }
+
+  return {
+    id: data.id,
+    name: data.name,
+  }
+}
+
+/**
+ * Set authentication cookie
+ * @param userId Player ID
+ */
+export async function setAuthCookie(userId: string, userName: string) {
+  const cookieStore = await cookies()
+
+  // Store user session as a simple JSON string
+  // In production, use proper session management with encryption
+  const sessionData = JSON.stringify({ userId, userName })
+
+  cookieStore.set('motogp_session', sessionData, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+  })
+}
+
+/**
+ * Get current authenticated user from cookie
+ * @returns AuthUser or null if not authenticated
+ */
+export async function getCurrentUser(): Promise<AuthUser | null> {
+  const cookieStore = await cookies()
+  const sessionCookie = cookieStore.get('motogp_session')
+
+  if (!sessionCookie) {
+    return null
+  }
+
+  try {
+    const sessionData = JSON.parse(sessionCookie.value)
+    return {
+      id: sessionData.userId,
+      name: sessionData.userName,
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Clear authentication cookie (logout)
+ */
+export async function clearAuthCookie() {
+  const cookieStore = await cookies()
+  cookieStore.delete('motogp_session')
+}
+
+/**
+ * Check if user is admin
+ * @param name Player name
+ * @returns true if admin
+ */
+export function isAdmin(name: string): boolean {
+  // In production, you might want to store admin status in the database
+  return name.toLowerCase() === 'admin'
+}
