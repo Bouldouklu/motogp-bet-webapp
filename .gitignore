@@ -36,3 +36,10 @@ next-env.d.ts
 # IDE
 .vscode/*
 .idea
+.idea/
+
+# Claude Code (AI assistant)
+.claude/
+
+# Playwright MCP (browser automation)
+.playwright-mcp/
