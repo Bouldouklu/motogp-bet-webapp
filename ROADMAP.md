@@ -16,7 +16,7 @@
 - [x] Create leaderboard view
 - [x] Add races calendar page
 
-## 🚧 Phase 2: Core Features (IN PROGRESS)
+## ✅ Phase 2: Core Features (COMPLETED)
 
 ### Admin Panel
 - [x] Create admin authentication check
@@ -46,10 +46,10 @@
 - [x] Add historical score tracking
 
 ### Championship Predictions
-- [ ] Championship prediction form
-- [ ] Lock predictions before first race
-- [ ] End-of-season championship scoring
-- [ ] Display championship predictions on dashboard
+- [x] Championship prediction form
+- [x] Lock predictions before first race
+- [x] End-of-season championship scoring (via admin panel)
+- [x] Display championship predictions on dashboard
 
 ## 📈 Phase 3: Polish & UX (FUTURE)
 

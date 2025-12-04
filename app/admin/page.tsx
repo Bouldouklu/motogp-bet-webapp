@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import ScoreCalculationPanel from '@/components/ScoreCalculationPanel'
+import ChampionshipResultsForm from '@/components/ChampionshipResultsForm'
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
@@ -26,6 +27,13 @@ export default async function AdminDashboard() {
     .from('races')
     .select('*')
     .order('round_number', { ascending: true })
+
+  // Fetch all riders for championship results
+  const { data: riders } = await supabase
+    .from('riders')
+    .select('*')
+    .eq('active', true)
+    .order('number', { ascending: true })
 
   // Get stats
   const { count: totalRaces } = await supabase
@@ -121,6 +129,12 @@ export default async function AdminDashboard() {
           <h2 className="text-xl font-semibold mb-4">Calculate Scores</h2>
           <ScoreCalculationPanel races={allRaces || []} />
         </div>
+      </div>
+
+      {/* Championship Results */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-xl font-semibold mb-4">Championship Results (End of Season)</h2>
+        <ChampionshipResultsForm riders={riders || []} seasonYear={2026} />
       </div>
 
       {/* Recent Activity */}

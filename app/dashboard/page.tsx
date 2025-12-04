@@ -26,10 +26,15 @@ export default async function DashboardPage() {
     .select('*', { count: 'exact', head: true })
     .eq('player_id', user.id)
 
-  // Fetch championship prediction status
+  // Fetch championship prediction status with rider details
   const { data: championshipPrediction } = await supabase
     .from('championship_predictions')
-    .select('*')
+    .select(`
+      *,
+      first_place:riders!championship_predictions_first_place_id_fkey(name, number, team),
+      second_place:riders!championship_predictions_second_place_id_fkey(name, number, team),
+      third_place:riders!championship_predictions_third_place_id_fkey(name, number, team)
+    `)
     .eq('player_id', user.id)
     .eq('season_year', 2026)
     .single()
@@ -123,6 +128,83 @@ export default async function DashboardPage() {
             </Link>
           )}
         </div>
+
+        {/* Championship Prediction Display - After deadline or submitted */}
+        {championshipPrediction && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold mb-4">Your Championship Prediction</h2>
+            <div className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="space-y-4">
+                {championshipDeadlinePassed && (
+                  <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                      🔒 Championship predictions are locked. Results will be scored at the end of the season.
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-4 p-4 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                  <div className="text-3xl">🥇</div>
+                  <div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">1st Place</div>
+                    <div className="text-lg font-bold">
+                      {championshipPrediction.first_place?.name}
+                      <span className="text-gray-500 dark:text-gray-400 ml-2">
+                        #{championshipPrediction.first_place?.number}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {championshipPrediction.first_place?.team}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-700 rounded-lg">
+                  <div className="text-3xl">🥈</div>
+                  <div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">2nd Place</div>
+                    <div className="text-lg font-bold">
+                      {championshipPrediction.second_place?.name}
+                      <span className="text-gray-500 dark:text-gray-400 ml-2">
+                        #{championshipPrediction.second_place?.number}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {championshipPrediction.second_place?.team}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-4 bg-orange-50 dark:bg-orange-900/10 border border-orange-200 dark:border-orange-800 rounded-lg">
+                  <div className="text-3xl">🥉</div>
+                  <div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">3rd Place</div>
+                    <div className="text-lg font-bold">
+                      {championshipPrediction.third_place?.name}
+                      <span className="text-gray-500 dark:text-gray-400 ml-2">
+                        #{championshipPrediction.third_place?.number}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {championshipPrediction.third_place?.team}
+                    </div>
+                  </div>
+                </div>
+
+                {!championshipDeadlinePassed && (
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <Link
+                      href="/championship"
+                      className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium"
+                    >
+                      Update prediction before {championshipDeadline.toLocaleDateString()} →
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div>
           <h2 className="text-2xl font-bold mb-4">Upcoming Races</h2>
