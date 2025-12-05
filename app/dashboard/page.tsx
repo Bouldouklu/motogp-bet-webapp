@@ -19,13 +19,13 @@ export default async function DashboardPage() {
     .select('*')
     .eq('status', 'upcoming')
     .order('round_number', { ascending: true })
-    .limit(5)
 
-  // Fetch user's predictions count
-  const { count: predictionsCount } = await supabase
-    .from('race_predictions')
-    .select('*', { count: 'exact', head: true })
-    .eq('player_id', user.id)
+  // Fetch previous races
+  const { data: previousRaces } = await supabase
+    .from('races')
+    .select('*')
+    .neq('status', 'upcoming')
+    .order('round_number', { ascending: false })
 
   // Fetch user's predictions for upcoming races to check which ones are already done
   const upcomingRaceIds = upcomingRaces?.map(race => race.id) || []
@@ -77,14 +77,7 @@ export default async function DashboardPage() {
           <LogoutButton />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="p-6 bg-track-gray rounded-xl border-l-4 border-motogp-red border-y border-r border-gray-800 shadow-lg">
-            <h3 className="text-sm uppercase tracking-wider text-gray-400 font-bold mb-2">My Predictions</h3>
-            <p className="text-5xl font-display font-black italic text-white">
-              {predictionsCount || 0}
-            </p>
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-12">
           <Link
             href="/leaderboard"
             className="group p-6 bg-track-gray rounded-xl border border-gray-800 hover:border-motogp-red transition-all duration-200 relative overflow-hidden"
@@ -95,19 +88,6 @@ export default async function DashboardPage() {
             <h3 className="text-lg font-display font-bold uppercase italic mb-2 group-hover:text-motogp-red transition-colors">Leaderboard</h3>
             <p className="text-sm text-gray-400">
               View standings →
-            </p>
-          </Link>
-
-          <Link
-            href="/races"
-            className="group p-6 bg-track-gray rounded-xl border border-gray-800 hover:border-motogp-red transition-all duration-200 relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <span className="text-6xl">📅</span>
-            </div>
-            <h3 className="text-lg font-display font-bold uppercase italic mb-2 group-hover:text-motogp-red transition-colors">Calendar</h3>
-            <p className="text-sm text-gray-400">
-              View all races →
             </p>
           </Link>
 
@@ -208,6 +188,50 @@ export default async function DashboardPage() {
             </div>
           </div>
         )}
+
+        {/* Previous Races Section */}
+        <div className="mb-12">
+          <h2 className="text-3xl font-display font-black italic uppercase mb-6 flex items-center gap-2">
+            <span className="w-1 h-8 bg-gray-600 skew-x-12 inline-block"></span>
+            Previous Races
+          </h2>
+          {previousRaces && previousRaces.length > 0 ? (
+            <div className="space-y-4">
+              {previousRaces.map((race) => (
+                <div
+                  key={race.id}
+                  className="group p-6 bg-track-gray/60 rounded-xl border border-gray-800 hover:border-gray-700 transition-all duration-200"
+                >
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                      <div className="flex items-center gap-3 mb-1">
+                          <span className="bg-gray-800 text-gray-500 text-xs font-bold uppercase px-2 py-0.5 rounded">Round {race.round_number}</span>
+                      </div>
+                      <h3 className="text-2xl font-display font-black italic uppercase text-gray-300">
+                        {race.name}
+                      </h3>
+                      <p className="text-sm text-gray-500 mb-2 font-medium">
+                        {race.circuit} • {race.country}
+                      </p>
+                      <div className="flex gap-4 text-sm text-gray-600 mt-2">
+                         <div>
+                            <span className="text-gray-500 font-bold">RACE:</span> {new Date(race.race_date).toLocaleDateString()}
+                         </div>
+                      </div>
+                    </div>
+                    <div className="w-full md:w-auto px-6 py-3 border border-gray-700 text-gray-500 font-black uppercase italic tracking-wider rounded transform -skew-x-12 text-center cursor-default">
+                        <span className="inline-block skew-x-12">Completed</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 italic">
+              No previous races.
+            </p>
+          )}
+        </div>
 
         <div>
           <h2 className="text-3xl font-display font-black italic uppercase mb-6 flex items-center gap-2">

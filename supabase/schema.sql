@@ -133,7 +133,10 @@ CREATE INDEX IF NOT EXISTS idx_races_round ON races(round_number);
 
 -- Leaderboard view
 -- Note: Excludes admin users (identified by name = 'admin', case-insensitive)
-CREATE OR REPLACE VIEW leaderboard AS
+-- Using security_invoker = true to ensure RLS policies of the querying user are applied
+CREATE OR REPLACE VIEW leaderboard 
+WITH (security_invoker = true)
+AS
 SELECT
   p.id as player_id,
   p.name,
@@ -230,3 +233,7 @@ CREATE POLICY "Players can update their own championship predictions" ON champio
 
 -- Note: For production, you should implement proper authentication and restrict these policies
 -- This is a simplified version for initial development
+
+-- Grant SELECT permission on leaderboard view to anon and authenticated roles
+GRANT SELECT ON leaderboard TO anon;
+GRANT SELECT ON leaderboard TO authenticated;
