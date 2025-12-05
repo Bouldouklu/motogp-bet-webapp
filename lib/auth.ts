@@ -52,11 +52,15 @@ export async function setAuthCookie(userId: string, userName: string) {
   // In production, use proper session management with encryption
   const sessionData = JSON.stringify({ userId, userName })
 
+  const oneMonth = 60 * 60 * 24 * 30 * 1000 // 30 days in milliseconds
+
   cookieStore.set('motogp_session', sessionData, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 30, // 30 days
+    path: '/',
+    maxAge: oneMonth / 1000, // seconds
+    expires: new Date(Date.now() + oneMonth),
   })
 }
 
