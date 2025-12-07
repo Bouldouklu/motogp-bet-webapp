@@ -3,7 +3,7 @@ import { Inter, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const racing = Barlow_Condensed({ 
+const racing = Barlow_Condensed({
   weight: ["400", "500", "600", "700", "800"],
   subsets: ["latin"],
   variable: "--font-racing"
@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   description: "MotoGP prediction and betting platform for friends",
 };
 
+import Footer from "@/components/Footer";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -21,10 +23,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${racing.variable}`}>
-      <body className="bg-carbon-black text-white min-h-screen antialiased selection:bg-motogp-red selection:text-white">
+      <body className="bg-carbon-black text-white min-h-screen antialiased selection:bg-motogp-red selection:text-white flex flex-col">
         <div className="fixed inset-0 z-[-1] opacity-20 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-gray-800 via-black to-black"></div>
         <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-motogp-red via-white to-motogp-red z-50"></div>
-        {children}
+        <main className="flex-1">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
