@@ -10,8 +10,6 @@ hours local austria
 fp1 is critical to fetch asap
 shutdown pronos for fp1 + 5 mins
 
-### cookies to keep login info
-
 ### Race card
 schedule to add to race card
 
