@@ -21,3 +21,5 @@ show offset comnpared to n-1 and top1
 typing for the surname of the riders.  
 start after login with final poduim to fill and then show the dashboard  
 add porrtait to the podium final prediction  
+
+## New font to add
