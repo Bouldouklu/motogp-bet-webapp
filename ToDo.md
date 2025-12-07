@@ -21,22 +21,10 @@ player has to say in which order the riders will be placed, focused only on the 
 
 ### other idea than glorious 7?
 
-### virer my prediction count
-
 ### card prediction race
 rajouter sur la card les tops 3 de sprint, race and glorious 7 une fois rentré. 
 
-### player dashboard
-make sure we have previous races above upcoming races
-make upciming races conplete with all races
-remove cvalender page
-add button to predct next race only 
-move chapmonship card to the top and buttons below it 
-
 ### leaderboard page
-show historical grpah of the leaderboard per race, with points on y axis
-show a table with total points awarded per race per player with color code basd on points? 
-add penality on leaderboard
 show offset comnpared to n-1 and top1
 
 ## NICE TO HAVE: 
@@ -44,6 +32,3 @@ typing for the surname of the riders.
 virer nom ecuries une fois selecrionné d drop down
 start after login with final poduim to fill and then show the dashboard
 add porrtait to the podium final prediction
-
-
-
