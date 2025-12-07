@@ -100,10 +100,12 @@ export default async function PredictPage({
           </div>
         </div>
 
-        <div className="bg-track-gray rounded-xl border border-gray-800 p-6 md:p-8 shadow-2xl relative overflow-hidden">
+        <div className="bg-track-gray rounded-xl border border-gray-800 p-6 md:p-8 shadow-2xl relative">
           {/* Decorative BG */}
-          <div className="absolute -top-10 -right-10 text-[10rem] opacity-5 font-display font-black italic text-motogp-red pointer-events-none select-none">
-            PREDICT
+          <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
+            <div className="absolute -top-10 -right-10 text-[10rem] opacity-5 font-display font-black italic text-motogp-red select-none">
+              PREDICT
+            </div>
           </div>
 
           <div className="relative z-10">
