@@ -25,7 +25,7 @@ export default async function DashboardPage() {
     .from('races')
     .select('*')
     .neq('status', 'upcoming')
-    .order('round_number', { ascending: false })
+    .order('round_number', { ascending: true })
 
   // Fetch results for previous races
   const previousRaceIds = previousRaces?.map(r => r.id) || []
