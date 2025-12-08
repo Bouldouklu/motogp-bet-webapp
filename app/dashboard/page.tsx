@@ -27,6 +27,24 @@ export default async function DashboardPage() {
     .neq('status', 'upcoming')
     .order('round_number', { ascending: false })
 
+  // Fetch results for previous races
+  const previousRaceIds = previousRaces?.map(r => r.id) || []
+  const { data: raceResults } = await supabase
+    .from('race_results')
+    .select(`
+      race_id,
+      position,
+      result_type,
+      rider:riders (
+        name,
+        number,
+        team
+      )
+    `)
+    .in('race_id', previousRaceIds)
+    .lte('position', 3)
+    .order('position', { ascending: true })
+
   // Fetch user's predictions for upcoming races to check which ones are already done
   const upcomingRaceIds = upcomingRaces?.map(race => race.id) || []
   const { data: userPredictions } = await supabase
@@ -249,34 +267,126 @@ export default async function DashboardPage() {
           </h2>
           {previousRaces && previousRaces.length > 0 ? (
             <div className="space-y-4">
-              {previousRaces.map((race) => (
-                <div
-                  key={race.id}
-                  className="group p-6 bg-track-gray/60 rounded-xl border border-gray-800 hover:border-gray-700 transition-all duration-200"
-                >
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className="bg-gray-800 text-gray-500 text-xs font-bold uppercase px-2 py-0.5 rounded">Round {race.round_number}</span>
-                      </div>
-                      <h3 className="text-2xl font-display font-black italic uppercase text-gray-300">
-                        {race.name}
-                      </h3>
-                      <p className="text-sm text-gray-500 mb-2 font-medium">
-                        {race.circuit} • {race.country}
-                      </p>
-                      <div className="flex gap-4 text-sm text-gray-600 mt-2">
-                        <div>
-                          <span className="text-gray-500 font-bold">RACE:</span> {new Date(race.race_date).toLocaleDateString()}
+              {previousRaces.map((race) => {
+                const raceSpecificResults = raceResults?.filter((r) => r.race_id === race.id) || []
+                const sprintPodium = raceSpecificResults
+                  .filter((r) => r.result_type === 'sprint')
+                  .sort((a, b) => a.position - b.position)
+                const racePodium = raceSpecificResults
+                  .filter((r) => r.result_type === 'race')
+                  .sort((a, b) => a.position - b.position)
+
+                return (
+                  <div
+                    key={race.id}
+                    className="group p-6 bg-track-gray/60 rounded-xl border border-gray-800 hover:border-gray-700 transition-all duration-200"
+                  >
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className="bg-gray-800 text-gray-500 text-xs font-bold uppercase px-2 py-0.5 rounded">
+                            Round {race.round_number}
+                          </span>
+                        </div>
+                        <h3 className="text-2xl font-display font-black italic uppercase text-gray-300">
+                          {race.name}
+                        </h3>
+                        <p className="text-sm text-gray-500 mb-2 font-medium">
+                          {race.circuit} • {race.country}
+                        </p>
+                        <div className="flex gap-4 text-sm text-gray-600 mt-2">
+                          <div>
+                            <span className="text-gray-500 font-bold">RACE:</span>{' '}
+                            {new Date(race.race_date).toLocaleDateString()}
+                          </div>
                         </div>
                       </div>
+                      <div className="w-full md:w-auto px-6 py-3 border border-gray-700 text-gray-500 font-black uppercase italic tracking-wider rounded transform -skew-x-12 text-center cursor-default">
+                        <span className="inline-block skew-x-12">Completed</span>
+                      </div>
                     </div>
-                    <div className="w-full md:w-auto px-6 py-3 border border-gray-700 text-gray-500 font-black uppercase italic tracking-wider rounded transform -skew-x-12 text-center cursor-default">
-                      <span className="inline-block skew-x-12">Completed</span>
-                    </div>
+
+                    {/* Results Display */}
+                    {(sprintPodium.length > 0 || racePodium.length > 0) && (
+                      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-700/50">
+                        {/* Sprint Results */}
+                        {sprintPodium.length > 0 && (
+                          <div>
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-motogp-red mb-3 flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-motogp-red"></span>
+                              Sprint Podium
+                            </h4>
+                            <div className="space-y-2">
+                              {sprintPodium.map((result: any) => (
+                                <div
+                                  key={result.position}
+                                  className="flex items-center justify-between text-sm bg-gray-900/30 p-2 rounded border border-gray-800/50"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <span
+                                      className={`font-mono font-bold w-4 text-center ${result.position === 1
+                                          ? 'text-yellow-500'
+                                          : result.position === 2
+                                            ? 'text-gray-400'
+                                            : 'text-orange-700'
+                                        }`}
+                                    >
+                                      {result.position}
+                                    </span>
+                                    <span className="font-display font-bold italic uppercase text-gray-300">
+                                      {result.rider?.name || 'Unknown'}
+                                    </span>
+                                  </div>
+                                  <span className="text-xs text-gray-600 font-mono">
+                                    #{result.rider?.number}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Race Results */}
+                        {racePodium.length > 0 && (
+                          <div>
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-motogp-red mb-3 flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-motogp-red"></span>
+                              Race Podium
+                            </h4>
+                            <div className="space-y-2">
+                              {racePodium.map((result: any) => (
+                                <div
+                                  key={result.position}
+                                  className="flex items-center justify-between text-sm bg-gray-900/30 p-2 rounded border border-gray-800/50"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <span
+                                      className={`font-mono font-bold w-4 text-center ${result.position === 1
+                                          ? 'text-yellow-500'
+                                          : result.position === 2
+                                            ? 'text-gray-400'
+                                            : 'text-orange-700'
+                                        }`}
+                                    >
+                                      {result.position}
+                                    </span>
+                                    <span className="font-display font-bold italic uppercase text-gray-300">
+                                      {result.rider?.name || 'Unknown'}
+                                    </span>
+                                  </div>
+                                  <span className="text-xs text-gray-600 font-mono">
+                                    #{result.rider?.number}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           ) : (
             <p className="text-gray-500 italic">
