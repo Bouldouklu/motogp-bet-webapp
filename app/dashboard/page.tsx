@@ -36,6 +36,7 @@ export default async function DashboardPage() {
       position,
       result_type,
       rider:riders (
+        id,
         name,
         number,
         team
