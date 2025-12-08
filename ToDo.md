@@ -11,13 +11,6 @@ Hourly schedule to add to race card
 
 ### point and scoring system to review and update 
 
-### Card prediction race
-rajouter sur la card les tops 3 de sprint, race and glorious 7 une fois rentré. 
-
-### change the bet wording for prediction
-
-### New font to add
-
 ## NICE TO HAVE: 
 typing for the surname of the riders.  
 start after login with final poduim to fill and then show the dashboard  

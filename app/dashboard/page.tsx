@@ -294,7 +294,7 @@ export default async function DashboardPage() {
 
                   // Check exact match
                   if (predictedRiderId === actualRiderId) {
-                    return { status: 'exact', label: 'Correct' }
+                    return { status: 'exact', label: '✓' }
                   }
 
                   // Check if rider was predicted elsewhere in the podium for this type
@@ -312,7 +312,7 @@ export default async function DashboardPage() {
                     else if (p2 === actualRiderId) predictedPos = 2
                     else if (p3 === actualRiderId) predictedPos = 3
 
-                    return { status: 'podium', label: `Predicted P${predictedPos}` }
+                    return { status: 'podium', label: `P${predictedPos}` }
                   }
 
                   return null
@@ -380,18 +380,19 @@ export default async function DashboardPage() {
                                       <span className="font-display font-bold italic uppercase text-gray-300">
                                         {result.rider?.name || 'Unknown'}
                                       </span>
+                                      {status && (
+                                        <div
+                                          className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold border ${status.status === 'exact'
+                                            ? 'bg-green-500/20 text-green-500 border-green-500/50'
+                                            : 'bg-orange-500/20 text-orange-500 border-orange-500/50'
+                                            }`}
+                                          title={status.status === 'exact' ? 'Exact Match!' : `You predicted this rider to finish ${status.label}`}
+                                        >
+                                          {status.label}
+                                        </div>
+                                      )}
                                     </div>
                                     <div className="flex items-center gap-3">
-                                      {status && (
-                                        <span
-                                          className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded border ${status.status === 'exact'
-                                              ? 'bg-green-900/30 text-green-500 border-green-800'
-                                              : 'bg-orange-900/30 text-orange-500 border-orange-800'
-                                            }`}
-                                        >
-                                          {status.status === 'exact' ? '✓' : status.label}
-                                        </span>
-                                      )}
                                       <span className="text-xs text-gray-600 font-mono">
                                         #{result.rider?.number}
                                       </span>
@@ -432,18 +433,19 @@ export default async function DashboardPage() {
                                       <span className="font-display font-bold italic uppercase text-gray-300">
                                         {result.rider?.name || 'Unknown'}
                                       </span>
+                                      {status && (
+                                        <div
+                                          className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold border ${status.status === 'exact'
+                                            ? 'bg-green-500/20 text-green-500 border-green-500/50'
+                                            : 'bg-orange-500/20 text-orange-500 border-orange-500/50'
+                                            }`}
+                                          title={status.status === 'exact' ? 'Exact Match!' : `You predicted this rider to finish ${status.label}`}
+                                        >
+                                          {status.label}
+                                        </div>
+                                      )}
                                     </div>
                                     <div className="flex items-center gap-3">
-                                      {status && (
-                                        <span
-                                          className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded border ${status.status === 'exact'
-                                              ? 'bg-green-900/30 text-green-500 border-green-800'
-                                              : 'bg-orange-900/30 text-orange-500 border-orange-800'
-                                            }`}
-                                        >
-                                          {status.status === 'exact' ? '✓' : status.label}
-                                        </span>
-                                      )}
                                       <span className="text-xs text-gray-600 font-mono">
                                         #{result.rider?.number}
                                       </span>
