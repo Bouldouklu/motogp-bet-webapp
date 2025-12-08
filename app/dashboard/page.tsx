@@ -46,14 +46,17 @@ export default async function DashboardPage() {
     .order('position', { ascending: true })
 
   // Fetch user's predictions for upcoming races to check which ones are already done
+  // AND for previous races to show the badges
   const upcomingRaceIds = upcomingRaces?.map(race => race.id) || []
+  const allRaceIdsOfInterest = [...upcomingRaceIds, ...previousRaceIds]
+
   const { data: userPredictions } = await supabase
     .from('race_predictions')
-    .select('race_id')
+    .select('*') // Select all fields needed for comparison
     .eq('player_id', user.id)
-    .in('race_id', upcomingRaceIds)
+    .in('race_id', allRaceIdsOfInterest)
 
-  // Create a Set of race IDs that have predictions for quick lookup
+  // Create a Set of race IDs that have predictions for quick lookup (for upcoming races)
   const predictedRaceIds = new Set(userPredictions?.map(p => p.race_id) || [])
 
   // Fetch championship prediction status with rider details
@@ -269,12 +272,51 @@ export default async function DashboardPage() {
             <div className="space-y-4">
               {previousRaces.map((race) => {
                 const raceSpecificResults = raceResults?.filter((r) => r.race_id === race.id) || []
+
+                // Get user prediction for this race
+                const prediction = userPredictions?.find(p => p.race_id === race.id)
+
                 const sprintPodium = raceSpecificResults
                   .filter((r) => r.result_type === 'sprint')
                   .sort((a, b) => a.position - b.position)
                 const racePodium = raceSpecificResults
                   .filter((r) => r.result_type === 'race')
                   .sort((a, b) => a.position - b.position)
+
+                // Helper to check prediction status
+                const getPredictionStatus = (type: 'sprint' | 'race', actualRiderId: string, actualPosition: number) => {
+                  if (!prediction) return null
+
+                  // Map position to field name
+                  const fieldPrefix = type === 'sprint' ? 'sprint' : 'race'
+                  const suffix = actualPosition === 1 ? '1st_id' : actualPosition === 2 ? '2nd_id' : '3rd_id'
+                  const predictedRiderId = prediction[`${fieldPrefix}_${suffix}` as keyof typeof prediction]
+
+                  // Check exact match
+                  if (predictedRiderId === actualRiderId) {
+                    return { status: 'exact', label: 'Correct' }
+                  }
+
+                  // Check if rider was predicted elsewhere in the podium for this type
+                  const p1 = prediction[`${fieldPrefix}_1st_id` as keyof typeof prediction]
+                  const p2 = prediction[`${fieldPrefix}_2nd_id` as keyof typeof prediction]
+                  const p3 = prediction[`${fieldPrefix}_3rd_id` as keyof typeof prediction]
+
+                  if ((p1 === actualRiderId && actualPosition !== 1) ||
+                    (p2 === actualRiderId && actualPosition !== 2) ||
+                    (p3 === actualRiderId && actualPosition !== 3)) {
+
+                    // Find where they predicted them instead
+                    let predictedPos = 0
+                    if (p1 === actualRiderId) predictedPos = 1
+                    else if (p2 === actualRiderId) predictedPos = 2
+                    else if (p3 === actualRiderId) predictedPos = 3
+
+                    return { status: 'podium', label: `Predicted P${predictedPos}` }
+                  }
+
+                  return null
+                }
 
                 return (
                   <div
@@ -317,31 +359,46 @@ export default async function DashboardPage() {
                               Sprint Podium
                             </h4>
                             <div className="space-y-2">
-                              {sprintPodium.map((result: any) => (
-                                <div
-                                  key={result.position}
-                                  className="flex items-center justify-between text-sm bg-gray-900/30 p-2 rounded border border-gray-800/50"
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <span
-                                      className={`font-mono font-bold w-4 text-center ${result.position === 1
+                              {sprintPodium.map((result: any) => {
+                                const status = getPredictionStatus('sprint', result.rider?.id, result.position)
+                                return (
+                                  <div
+                                    key={result.position}
+                                    className="flex items-center justify-between text-sm bg-gray-900/30 p-2 rounded border border-gray-800/50"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <span
+                                        className={`font-mono font-bold w-4 text-center ${result.position === 1
                                           ? 'text-yellow-500'
                                           : result.position === 2
                                             ? 'text-gray-400'
                                             : 'text-orange-700'
-                                        }`}
-                                    >
-                                      {result.position}
-                                    </span>
-                                    <span className="font-display font-bold italic uppercase text-gray-300">
-                                      {result.rider?.name || 'Unknown'}
-                                    </span>
+                                          }`}
+                                      >
+                                        {result.position}
+                                      </span>
+                                      <span className="font-display font-bold italic uppercase text-gray-300">
+                                        {result.rider?.name || 'Unknown'}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                      {status && (
+                                        <span
+                                          className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded border ${status.status === 'exact'
+                                              ? 'bg-green-900/30 text-green-500 border-green-800'
+                                              : 'bg-orange-900/30 text-orange-500 border-orange-800'
+                                            }`}
+                                        >
+                                          {status.status === 'exact' ? '✓' : status.label}
+                                        </span>
+                                      )}
+                                      <span className="text-xs text-gray-600 font-mono">
+                                        #{result.rider?.number}
+                                      </span>
+                                    </div>
                                   </div>
-                                  <span className="text-xs text-gray-600 font-mono">
-                                    #{result.rider?.number}
-                                  </span>
-                                </div>
-                              ))}
+                                )
+                              })}
                             </div>
                           </div>
                         )}
@@ -354,31 +411,46 @@ export default async function DashboardPage() {
                               Race Podium
                             </h4>
                             <div className="space-y-2">
-                              {racePodium.map((result: any) => (
-                                <div
-                                  key={result.position}
-                                  className="flex items-center justify-between text-sm bg-gray-900/30 p-2 rounded border border-gray-800/50"
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <span
-                                      className={`font-mono font-bold w-4 text-center ${result.position === 1
+                              {racePodium.map((result: any) => {
+                                const status = getPredictionStatus('race', result.rider?.id, result.position)
+                                return (
+                                  <div
+                                    key={result.position}
+                                    className="flex items-center justify-between text-sm bg-gray-900/30 p-2 rounded border border-gray-800/50"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <span
+                                        className={`font-mono font-bold w-4 text-center ${result.position === 1
                                           ? 'text-yellow-500'
                                           : result.position === 2
                                             ? 'text-gray-400'
                                             : 'text-orange-700'
-                                        }`}
-                                    >
-                                      {result.position}
-                                    </span>
-                                    <span className="font-display font-bold italic uppercase text-gray-300">
-                                      {result.rider?.name || 'Unknown'}
-                                    </span>
+                                          }`}
+                                      >
+                                        {result.position}
+                                      </span>
+                                      <span className="font-display font-bold italic uppercase text-gray-300">
+                                        {result.rider?.name || 'Unknown'}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                      {status && (
+                                        <span
+                                          className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded border ${status.status === 'exact'
+                                              ? 'bg-green-900/30 text-green-500 border-green-800'
+                                              : 'bg-orange-900/30 text-orange-500 border-orange-800'
+                                            }`}
+                                        >
+                                          {status.status === 'exact' ? '✓' : status.label}
+                                        </span>
+                                      )}
+                                      <span className="text-xs text-gray-600 font-mono">
+                                        #{result.rider?.number}
+                                      </span>
+                                    </div>
                                   </div>
-                                  <span className="text-xs text-gray-600 font-mono">
-                                    #{result.rider?.number}
-                                  </span>
-                                </div>
-                              ))}
+                                )
+                              })}
                             </div>
                           </div>
                         )}
