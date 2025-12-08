@@ -51,8 +51,8 @@ export default function LoginPage() {
     <main className="flex min-h-screen flex-col items-center justify-center p-6 font-sans text-white">
       <div className="w-full max-w-md">
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-display font-black italic tracking-tighter uppercase transform -skew-x-12 leading-none mb-4">
-             MotoGP <span className="text-motogp-red">Bet</span>
+          <h1 className="text-5xl md:text-6xl font-display font-black italic tracking-tighter uppercase transform -skew-x-12 leading-none mb-4">
+            MotoGP <span className="text-motogp-red">Prediction</span>
           </h1>
           <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">
             Rider Sign In
@@ -60,20 +60,20 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-track-gray p-8 rounded-xl border-l-4 border-motogp-red border-y border-r border-gray-800 shadow-2xl relative overflow-hidden">
-            {/* Decorative bg element */}
-            <div className="absolute -right-10 -top-10 text-9xl opacity-5 font-display italic font-black pointer-events-none">
-                GO
-            </div>
+          {/* Decorative bg element */}
+          <div className="absolute -right-10 -top-10 text-9xl opacity-5 font-display italic font-black pointer-events-none">
+            GO
+          </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+          <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
             <div>
-                <label
+              <label
                 htmlFor="name"
                 className="block text-xs font-bold uppercase tracking-wider text-motogp-red mb-1 font-display italic"
-                >
+              >
                 Player Name
-                </label>
-                <input
+              </label>
+              <input
                 type="text"
                 id="name"
                 value={name}
@@ -81,17 +81,17 @@ export default function LoginPage() {
                 required
                 className="w-full px-4 py-3 bg-black/20 border border-gray-700 text-white font-bold placeholder-gray-600 focus:outline-none focus:border-motogp-red focus:bg-black/40 transition-all"
                 placeholder="ENTER NAME"
-                />
+              />
             </div>
 
             <div>
-                <label
+              <label
                 htmlFor="passphrase"
                 className="block text-xs font-bold uppercase tracking-wider text-motogp-red mb-1 font-display italic"
-                >
+              >
                 Passphrase
-                </label>
-                <input
+              </label>
+              <input
                 type="password"
                 id="passphrase"
                 value={passphrase}
@@ -99,34 +99,34 @@ export default function LoginPage() {
                 required
                 className="w-full px-4 py-3 bg-black/20 border border-gray-700 text-white font-bold placeholder-gray-600 focus:outline-none focus:border-motogp-red focus:bg-black/40 transition-all"
                 placeholder="••••••••"
-                />
+              />
             </div>
 
             {error && (
-                <div className="p-3 bg-red-900/20 border-l-4 border-red-600 text-red-400 text-sm font-bold">
+              <div className="p-3 bg-red-900/20 border-l-4 border-red-600 text-red-400 text-sm font-bold">
                 ⚠️ {error}
-                </div>
+              </div>
             )}
 
             <button
-                type="submit"
-                disabled={loading}
-                className="w-full px-4 py-4 bg-motogp-red hover:bg-white hover:text-black text-white font-black italic uppercase text-xl tracking-wider transform -skew-x-12 transition-all shadow-lg mt-4"
+              type="submit"
+              disabled={loading}
+              className="w-full px-4 py-4 bg-motogp-red hover:bg-white hover:text-black text-white font-black italic uppercase text-xl tracking-wider transform -skew-x-12 transition-all shadow-lg mt-4"
             >
-                <span className="inline-block skew-x-12">
-                    {loading ? 'Starting Engine...' : 'Start Engine'}
-                </span>
+              <span className="inline-block skew-x-12">
+                {loading ? 'Starting Engine...' : 'Start Engine'}
+              </span>
             </button>
-            </form>
+          </form>
 
-            <div className="mt-8 text-center pt-6 border-t border-gray-800">
+          <div className="mt-8 text-center pt-6 border-t border-gray-800">
             <Link
-                href="/"
-                className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors"
+              href="/"
+              className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors"
             >
-                ← Back to Pit Lane
+              ← Back to Pit Lane
             </Link>
-            </div>
+          </div>
         </div>
       </div>
     </main>

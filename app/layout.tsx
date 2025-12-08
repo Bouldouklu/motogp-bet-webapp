@@ -28,8 +28,8 @@ const motogp = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "MotoGP Betting",
-  description: "MotoGP prediction and betting platform for friends",
+  title: "MotoGP Predictions",
+  description: "MotoGP prediction platform for friends",
 };
 
 import Footer from "@/components/Footer";
