@@ -9,17 +9,16 @@ shutdown pronos for fp1 + 5 mins
 ### Race card
 Hourly schedule to add to race card
 
-### other idea than glorious 7?
+### point and scoring system to review and update 
 
 ### Card prediction race
 rajouter sur la card les tops 3 de sprint, race and glorious 7 une fois rentré. 
 
-### leaderboard page
-show offset comnpared to n-1 and top1
+### change the bet wording for prediction
+
+### New font to add
 
 ## NICE TO HAVE: 
 typing for the surname of the riders.  
 start after login with final poduim to fill and then show the dashboard  
-add porrtait to the podium final prediction  
-
-## New font to add
+add porrtait to the podium final prediction

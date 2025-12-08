@@ -38,7 +38,7 @@ export default async function LeaderboardPage() {
     const playerScores = safeScores.filter(s => s.player_id === player.id)
     const totalPoints = playerScores.reduce((sum, s) => sum + (s.total_points || 0), 0)
     const totalPenalties = playerScores.reduce((sum, s) => sum + (s.penalty_points || 0), 0)
-    
+
     return {
       id: player.id,
       name: player.name,
@@ -47,25 +47,37 @@ export default async function LeaderboardPage() {
     }
   }).sort((a, b) => b.totalPoints - a.totalPoints)
 
+  // Calculate differences
+  const playerStatsWithDiffs = playerStats.map((stat, index) => {
+    const leaderPoints = playerStats[0].totalPoints;
+    const prevPlayerPoints = index > 0 ? playerStats[index - 1].totalPoints : stat.totalPoints;
+
+    return {
+      ...stat,
+      diffToLeader: leaderPoints - stat.totalPoints,
+      diffToPrev: prevPlayerPoints - stat.totalPoints
+    };
+  });
+
   // 2. Prepare Trend Data (Cumulative)
-  const completedRaces = safeRaces.filter(r => 
+  const completedRaces = safeRaces.filter(r =>
     safeScores.some(s => s.race_id === r.id)
   )
 
   const trendData = completedRaces.map(race => {
     const point: any = { race: race.circuit } // Use circuit name for X-axis
-    
+
     safePlayers.forEach(player => {
       // Calculate cumulative score up to this race
       // Filter scores for this player and races up to current race round
       const playerCumulative = safeScores
         .filter(s => s.player_id === player.id)
         .filter(s => {
-            const scoreRace = safeRaces.find(r => r.id === s.race_id)
-            return scoreRace && scoreRace.round_number <= race.round_number
+          const scoreRace = safeRaces.find(r => r.id === s.race_id)
+          return scoreRace && scoreRace.round_number <= race.round_number
         })
         .reduce((sum, s) => sum + (s.total_points || 0), 0)
-      
+
       point[player.name] = playerCumulative
     })
     return point
@@ -84,10 +96,10 @@ export default async function LeaderboardPage() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b-4 border-motogp-red pb-6">
           <div>
             <Link
-                href="/dashboard"
-                className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors mb-4 inline-block"
+              href="/dashboard"
+              className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors mb-4 inline-block"
             >
-                ← Back to Pit Lane
+              ← Back to Pit Lane
             </Link>
             <h1 className="text-5xl md:text-7xl font-display font-black italic tracking-tighter uppercase transform -skew-x-12 leading-none">
               Championship <span className="text-motogp-red">Standings</span>
@@ -98,49 +110,52 @@ export default async function LeaderboardPage() {
           </div>
         </div>
 
-        {playerStats.length > 0 ? (
+        {playerStatsWithDiffs.length > 0 ? (
           <div className="space-y-12">
-            
+
             {/* Main Leaderboard Table */}
             <div className="bg-track-gray rounded-xl border border-gray-800 overflow-hidden shadow-2xl relative">
-                <div className="absolute top-0 right-0 p-4 opacity-5 text-9xl font-display font-black italic pointer-events-none">
-                    RANK
+              <div className="absolute top-0 right-0 p-4 opacity-5 text-9xl font-display font-black italic pointer-events-none">
+                RANK
+              </div>
+
+              <div className="relative z-10">
+                <div className="grid grid-cols-12 gap-4 p-4 bg-black/40 text-xs uppercase text-gray-500 font-bold tracking-wider border-b border-gray-800">
+                  <div className="col-span-2 md:col-span-1 text-center">Pos</div>
+                  <div className="col-span-4 md:col-span-4">Rider</div>
+                  <div className="hidden md:block col-span-2 text-center text-[10px] md:text-xs">Diff Leader</div>
+                  <div className="hidden md:block col-span-2 text-center text-[10px] md:text-xs">Diff Prev</div>
+                  <div className="col-span-6 md:col-span-3 text-right pr-4">Total Points</div>
                 </div>
 
-                <div className="relative z-10">
-                    <div className="grid grid-cols-12 gap-4 p-4 bg-black/40 text-xs uppercase text-gray-500 font-bold tracking-wider border-b border-gray-800">
-                        <div className="col-span-2 md:col-span-1 text-center">Pos</div>
-                        <div className="col-span-6 md:col-span-5">Rider</div>
-                        <div className="hidden md:block col-span-3 text-center">Penalties</div>
-                        <div className="col-span-4 md:col-span-3 text-right pr-4">Total Points</div>
+                <div className="divide-y divide-gray-800">
+                  {playerStatsWithDiffs.map((entry, index) => (
+                    <div key={entry.id} className={`grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors ${index < 3 ? 'bg-gradient-to-r from-white/5 to-transparent' : ''}`}>
+                      <div className="col-span-2 md:col-span-1 text-center">
+                        <span className={`font-display font-black italic text-2xl md:text-3xl ${index === 0 ? 'text-yellow-400' :
+                            index === 1 ? 'text-gray-400' :
+                              index === 2 ? 'text-amber-700' : 'text-gray-600'
+                          }`}>
+                          {index + 1}
+                        </span>
+                      </div>
+                      <div className="col-span-4 md:col-span-4">
+                        <div className="font-bold uppercase text-lg md:text-xl truncate">{entry.name}</div>
+                        {index === 0 && <div className="text-xs text-yellow-500 font-bold uppercase tracking-wider">Current Leader</div>}
+                      </div>
+                      <div className="hidden md:block col-span-2 text-center">
+                        <div className="font-mono text-gray-400">{index === 0 ? '-' : `-${entry.diffToLeader}`}</div>
+                      </div>
+                      <div className="hidden md:block col-span-2 text-center">
+                        <div className="font-mono text-gray-500">{index === 0 ? '-' : `-${entry.diffToPrev}`}</div>
+                      </div>
+                      <div className="col-span-6 md:col-span-3 text-right pr-4">
+                        <div className="font-display font-black italic text-3xl text-motogp-red">{entry.totalPoints}</div>
+                      </div>
                     </div>
-
-                    <div className="divide-y divide-gray-800">
-                        {playerStats.map((entry, index) => (
-                            <div key={entry.id} className={`grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors ${index < 3 ? 'bg-gradient-to-r from-white/5 to-transparent' : ''}`}>
-                                <div className="col-span-2 md:col-span-1 text-center">
-                                    <span className={`font-display font-black italic text-2xl md:text-3xl ${
-                                        index === 0 ? 'text-yellow-400' : 
-                                        index === 1 ? 'text-gray-400' : 
-                                        index === 2 ? 'text-amber-700' : 'text-gray-600'
-                                    }`}>
-                                        {index + 1}
-                                    </span>
-                                </div>
-                                <div className="col-span-6 md:col-span-5">
-                                    <div className="font-bold uppercase text-lg md:text-xl truncate">{entry.name}</div>
-                                    {index === 0 && <div className="text-xs text-yellow-500 font-bold uppercase tracking-wider">Current Leader</div>}
-                                </div>
-                                <div className="hidden md:block col-span-3 text-center">
-                                    <div className="font-mono text-red-400 font-bold">{entry.totalPenalties > 0 ? `-${entry.totalPenalties}` : '-'}</div>
-                                </div>
-                                <div className="col-span-4 md:col-span-3 text-right pr-4">
-                                    <div className="font-display font-black italic text-3xl text-motogp-red">{entry.totalPoints}</div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                  ))}
                 </div>
+              </div>
             </div>
 
             {/* Championship Trend Graph */}
@@ -150,7 +165,7 @@ export default async function LeaderboardPage() {
                 Championship Trend
               </h2>
               {trendData.length > 0 ? (
-                 <LeaderboardTrendChart data={trendData} players={chartPlayers} />
+                <LeaderboardTrendChart data={trendData} players={chartPlayers} />
               ) : (
                 <div className="p-8 bg-track-gray rounded-xl border border-gray-800 text-center text-gray-500 italic">
                   Not enough data to show trends yet.
@@ -187,12 +202,12 @@ export default async function LeaderboardPage() {
                           {player.name}
                         </td>
                         {completedRaces.map(race => {
-                           const score = safeScores.find(s => s.race_id === race.id && s.player_id === player.id)
-                           return (
-                             <td key={race.id} className="px-6 py-4 font-mono text-gray-300 text-center">
-                               {score?.total_points || '-'}
-                             </td>
-                           )
+                          const score = safeScores.find(s => s.race_id === race.id && s.player_id === player.id)
+                          return (
+                            <td key={race.id} className="px-6 py-4 font-mono text-gray-300 text-center">
+                              {score?.total_points || '-'}
+                            </td>
+                          )
                         })}
                         <td className="px-6 py-4 font-black italic text-right text-motogp-red border-l border-gray-800">
                           {player.totalPoints}
@@ -202,9 +217,9 @@ export default async function LeaderboardPage() {
                   </tbody>
                 </table>
                 {completedRaces.length === 0 && (
-                    <div className="p-8 text-center text-gray-500 italic">
-                        No races completed yet.
-                    </div>
+                  <div className="p-8 text-center text-gray-500 italic">
+                    No races completed yet.
+                  </div>
                 )}
               </div>
             </div>
@@ -219,9 +234,9 @@ export default async function LeaderboardPage() {
               The season hasn't started. Make your predictions to get on the board!
             </p>
             <div className="mt-6">
-                <Link href="/dashboard" className="inline-block px-6 py-3 bg-motogp-red hover:bg-white hover:text-black text-white font-black italic uppercase tracking-wider transform -skew-x-12 transition-all">
-                    <span className="inline-block skew-x-12">Go to Dashboard</span>
-                </Link>
+              <Link href="/dashboard" className="inline-block px-6 py-3 bg-motogp-red hover:bg-white hover:text-black text-white font-black italic uppercase tracking-wider transform -skew-x-12 transition-all">
+                <span className="inline-block skew-x-12">Go to Dashboard</span>
+              </Link>
             </div>
           </div>
         )}
