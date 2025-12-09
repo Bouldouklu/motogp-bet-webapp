@@ -88,15 +88,15 @@ export default async function ChampionshipPage(props: Props) {
               <ul className="space-y-4">
                 <li className="flex items-center justify-between pb-2 border-b border-gray-800">
                   <span className="text-gray-400 font-bold uppercase text-xs">Winner</span>
-                  <span className="font-display font-black italic text-xl text-yellow-500">37 PTS</span>
+                  <span className="font-display font-black italic text-xl text-yellow-500">250 PTS</span>
                 </li>
                 <li className="flex items-center justify-between pb-2 border-b border-gray-800">
                   <span className="text-gray-400 font-bold uppercase text-xs">Runner Up</span>
-                  <span className="font-display font-black italic text-xl text-gray-300">25 PTS</span>
+                  <span className="font-display font-black italic text-xl text-gray-300">100 PTS</span>
                 </li>
                 <li className="flex items-center justify-between">
                   <span className="text-gray-400 font-bold uppercase text-xs">Third</span>
-                  <span className="font-display font-black italic text-xl text-orange-600">25 PTS</span>
+                  <span className="font-display font-black italic text-xl text-orange-600">100 PTS</span>
                 </li>
               </ul>
               <p className="text-xs text-gray-500 mt-4 italic">
