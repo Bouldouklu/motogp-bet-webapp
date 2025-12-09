@@ -82,7 +82,7 @@ export default function ScoringPage() {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y">
-                                            <tr className="bg-green-50/50 dark:bg-green-900/10">
+                                            <tr>
                                                 <td className="px-4 py-2 flex items-center gap-2">
                                                     <span className="text-green-600 font-bold">🎯 Exact</span>
                                                 </td>
