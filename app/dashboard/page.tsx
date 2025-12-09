@@ -84,6 +84,11 @@ export default async function DashboardPage() {
   const championshipDeadline = new Date(firstRace?.fp1_datetime || '2026-03-01T00:00:00Z')
   const championshipDeadlinePassed = championshipDeadline < new Date()
 
+  // First-time login experience: Redirect to championship prediction if not done
+  if (!championshipPrediction && !championshipDeadlinePassed) {
+    redirect('/championship?welcome=true')
+  }
+
   return (
     <main className="min-h-screen p-6 text-white font-sans">
       <div className="max-w-6xl mx-auto">
