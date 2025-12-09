@@ -85,6 +85,7 @@ export default async function DashboardPage() {
   const championshipDeadlinePassed = championshipDeadline < new Date()
 
   // First-time login experience: Redirect to championship prediction if not done
+  // (Ensures 100% participation in season predictions)
   if (!championshipPrediction && !championshipDeadlinePassed) {
     redirect('/championship?welcome=true')
   }
